@@ -22,4 +22,8 @@ def create_app():
 
     app.register_blueprint(db_commands)
 
+    from controllers.auth_controller import auth_bp
+
+    app.register_blueprint(auth_bp)
+
     return app
