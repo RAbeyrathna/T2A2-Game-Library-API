@@ -5,6 +5,8 @@ from flask import Blueprint
 from init import db, bcrypt
 from models.user import User
 from models.game import Game
+from models.platform import Platform
+from models.genre import Genre
 
 db_commands = Blueprint("db", __name__)
 
@@ -83,6 +85,65 @@ def seed_tables():
         ),
     ]
     db.session.add_all(games)
+
+    genres = [
+        Genre(genre_name="Action"),
+        Genre(genre_name="Adventure"),
+        Genre(genre_name="Role-Playing"),
+        Genre(genre_name="Simulation"),
+        Genre(genre_name="Strategy"),
+        Genre(genre_name="Sports"),
+        Genre(genre_name="Puzzle"),
+        Genre(genre_name="Idle"),
+        Genre(genre_name="Racing"),
+        Genre(genre_name="Fighting"),
+        Genre(genre_name="Shooter"),
+        Genre(genre_name="MMO"),
+        Genre(genre_name="Platformer"),
+        Genre(genre_name="Music"),
+        Genre(genre_name="Horror"),
+        Genre(genre_name="Survival"),
+        Genre(genre_name="Battle Royale"),
+        Genre(genre_name="Visual Novel"),
+        Genre(genre_name="Rhythm"),
+        Genre(genre_name="Roguelike"),
+        Genre(genre_name="Educational"),
+        Genre(genre_name="Card & Board Game"),
+        Genre(genre_name="MOBA"),
+        Genre(genre_name="Point & Click"),
+        Genre(genre_name="Sandbox"),
+        Genre(genre_name="Tower Defense"),
+        Genre(genre_name="Text Adventure"),
+        Genre(genre_name="Hack and Slash"),
+        Genre(genre_name="Stealth"),
+        Genre(genre_name="Flight Simulation"),
+    ]
+
+    db.session.add_all(genres)
+
+    platforms = [
+        Platform(platform_name="Windows", platform_type="PC"),
+        Platform(platform_name="Linux", platform_type="PC"),
+        Platform(platform_name="Mac OS", platform_type="PC"),
+        Platform(platform_name="PlayStation Vita", platform_type="Handheld"),
+        Platform(platform_name="Nintendo DS", platform_type="Handheld"),
+        Platform(platform_name="Nintendo 3DS", platform_type="Handheld"),
+        Platform(platform_name="Sega Genesis", platform_type="Home Console"),
+        Platform(platform_name="PlayStation 3", platform_type="Home Console"),
+        Platform(platform_name="PlayStation 4", platform_type="Home Console"),
+        Platform(platform_name="PlayStation 5", platform_type="Home Console"),
+        Platform(platform_name="Xbox 360", platform_type="Home Console"),
+        Platform(platform_name="Xbox One", platform_type="Home Console"),
+        Platform(platform_name="Xbox Series X", platform_type="Home Console"),
+        Platform(platform_name="Xbox Series S", platform_type="Home Console"),
+        Platform(platform_name="Nintendo 64", platform_type="Home Console"),
+        Platform(platform_name="Nintendo Wii", platform_type="Home Console"),
+        Platform(platform_name="Nintendo Wii U", platform_type="Home Console"),
+        Platform(platform_name="Nintendo Switch", platform_type="Hybrid"),
+    ]
+
+    db.session.add_all(platforms)
+
     db.session.commit()
 
     print("Tables have been seeded")
