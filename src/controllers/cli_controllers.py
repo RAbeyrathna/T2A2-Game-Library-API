@@ -42,11 +42,11 @@ def seed_tables():
     db.session.add_all(users)
     games = [
         Game(
-            title="Pokemon Emerald",
+            title="Pokemon Diamond",
             publisher="Nintendo",
-            description="Pokémon Emerald Version takes Trainers back to the land of Hoenn for an expanded adventure, this time against both Team Magma and Team Aqua! Pokémon Emerald also features an even more exciting storyline featuring the Legendary Rayquaza, and the chance to catch more Legendary Pokémon such as both Latios and Latias!",
-            release_date=date(2004, 9, 9),
-            metacritic_score=76,
+            description="Pokemon Diamond is a traditional Pokemon RPG that takes place in a region called Sinnoh. In the Sinnoh region, there are two Pokemon that symbolize the region. They appear in the Sinnoh reigon's myths and old folklore. One is called Dialga, and is said to have the power to control time.",
+            release_date=date(2008, 9, 28),
+            metacritic_score=85,
         ),
         Game(
             title="Balatro",
@@ -87,36 +87,46 @@ def seed_tables():
     db.session.add_all(games)
 
     genres = [
-        Genre(genre_name="Action"),
-        Genre(genre_name="Adventure"),
-        Genre(genre_name="Role-Playing"),
+        Genre(genre_name="Action"),  # God of War
+        Genre(genre_name="Adventure"),  # Pokemon Diamond
+        Genre(genre_name="Role-Playing"),  # Pokemon Diamond and Pyre
         Genre(genre_name="Simulation"),
-        Genre(genre_name="Strategy"),
+        Genre(genre_name="Strategy"),  # Slay The Spire
         Genre(genre_name="Sports"),
-        Genre(genre_name="Puzzle"),
+        Genre(genre_name="Puzzle"),  # Psychonauts
         Genre(genre_name="Idle"),
         Genre(genre_name="Racing"),
         Genre(genre_name="Fighting"),
         Genre(genre_name="Shooter"),
         Genre(genre_name="MMO"),
-        Genre(genre_name="Platformer"),
+        Genre(genre_name="Platformer"),  # Psychonauts
         Genre(genre_name="Music"),
         Genre(genre_name="Horror"),
         Genre(genre_name="Survival"),
         Genre(genre_name="Battle Royale"),
         Genre(genre_name="Visual Novel"),
         Genre(genre_name="Rhythm"),
-        Genre(genre_name="Roguelike"),
+        Genre(genre_name="Roguelike"),  # Slay The Spire, Balatro
         Genre(genre_name="Educational"),
-        Genre(genre_name="Card & Board Game"),
+        Genre(genre_name="Card & Board Game"),  # Balatro
         Genre(genre_name="MOBA"),
         Genre(genre_name="Point & Click"),
         Genre(genre_name="Sandbox"),
         Genre(genre_name="Tower Defense"),
         Genre(genre_name="Text Adventure"),
-        Genre(genre_name="Hack and Slash"),
+        Genre(genre_name="Hack and Slash"),  # God of War
         Genre(genre_name="Stealth"),
         Genre(genre_name="Flight Simulation"),
+        Genre(genre_name="Narrative"),
+        Genre(genre_name="Fantasy"),  # God of War
+        Genre(genre_name="Indie"),  # Balatro
+        Genre(genre_name="Mythology"),  # God of War
+        Genre(genre_name="Tactical"),  # Slay the Spire, Balatro
+        Genre(genre_name="Party"),
+        Genre(genre_name="Turn-Based"),  # Slay the Spire
+        Genre(genre_name="Action RPG"),
+        Genre(genre_name="Deck Building"),  # Slay the Spire, Balatro
+        Genre(genre_name="Open World"),
     ]
 
     db.session.add_all(genres)
