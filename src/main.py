@@ -26,4 +26,8 @@ def create_app():
 
     app.register_blueprint(auth_bp)
 
+    from controllers.user_library_controller import libraries_bp
+
+    app.register_blueprint(libraries_bp)
+
     return app

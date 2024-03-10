@@ -7,6 +7,8 @@ from models.user import User
 from models.game import Game
 from models.platform import Platform
 from models.genre import Genre
+from models.user_library import User_library
+from models.game_genre import Game_genre
 
 db_commands = Blueprint("db", __name__)
 
@@ -40,6 +42,14 @@ def seed_tables():
     ]
 
     db.session.add_all(users)
+
+    user_libraries = [
+        User_library(user=users[0]),
+        User_library(user=users[1]),
+    ]
+
+    db.session.add_all(user_libraries)
+
     games = [
         Game(
             title="Pokemon Diamond",
@@ -130,6 +140,15 @@ def seed_tables():
     ]
 
     db.session.add_all(genres)
+
+    game_genres = [
+        Game_genre(game=games[0], genre=genres[0]),
+        Game_genre(game=games[0], genre=genres[1]),
+        Game_genre(game=games[0], genre=genres[2]),
+        Game_genre(game=games[1], genre=genres[1]),
+    ]
+
+    db.session.add_all(game_genres)
 
     platforms = [
         Platform(platform_name="Windows", platform_type="PC"),

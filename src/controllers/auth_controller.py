@@ -7,6 +7,7 @@ from psycopg2 import errorcodes
 
 from init import db, bcrypt
 from models.user import User, user_schema
+from models.user_library import User_library, user_library_schema
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -28,9 +29,15 @@ def auth_register():
             user.password = bcrypt.generate_password_hash(password).decode(
                 "utf-8"
             )
-        # Add and commit user to DB
+
+        # Create user and user library, then commit to session
         db.session.add(user)
+
+        user_library = User_library(user=user)
+        db.session.add(user_library)
+
         db.session.commit()
+
         # Respond back to client
         return user_schema.dump(user), 201
 

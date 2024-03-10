@@ -12,13 +12,13 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
 
     user_library = db.relationship(
-        "User_Library", back_populates="user", cascade="all, delete"
+        "User_library", back_populates="user", cascade="all, delete"
     )
 
 
 class UserSchema(ma.Schema):
 
-    user_library = fields.Nested("user_library_schema", exclude=["user"])
+    user_library = fields.Nested("User_Library_Schema", exclude=["user"])
 
     class Meta:
         fields = (
