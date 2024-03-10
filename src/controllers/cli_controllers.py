@@ -9,6 +9,7 @@ from models.platform import Platform
 from models.genre import Genre
 from models.user_library import User_library
 from models.game_genre import Game_genre
+from models.game_platform import Game_platform
 
 db_commands = Blueprint("db", __name__)
 
@@ -172,6 +173,16 @@ def seed_tables():
     ]
 
     db.session.add_all(platforms)
+
+    game_platforms = [
+        Game_platform(game=games[0], platform=platforms[0]),
+        Game_platform(game=games[0], platform=platforms[1]),
+        Game_platform(game=games[1], platform=platforms[0]),
+        Game_platform(game=games[2], platform=platforms[1]),
+        Game_platform(game=games[2], platform=platforms[2]),
+    ]
+
+    db.session.add_all(game_platforms)
 
     db.session.commit()
 

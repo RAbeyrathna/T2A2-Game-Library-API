@@ -14,13 +14,21 @@ class Game(db.Model):
 
     game_genres = db.relationship(
         "Game_genre", back_populates="game", cascade="all, delete"
-    )  # Add nullable = False once all other fields set so can assign a game genre
+    )
+
+    game_platforms = db.relationship(
+        "Game_platform", back_populates="game", cascade="all, delete"
+    )
 
 
 class GameSchema(ma.Schema):
 
     game_genres = fields.List(
         fields.Nested("Game_Genre_Schema", exclude=["game"])
+    )
+
+    game_platforms = fields.List(
+        fields.Nested("Game_Platform_Schema", exclude=["game"])
     )
 
     class Meta:
@@ -32,6 +40,7 @@ class GameSchema(ma.Schema):
             "release_date",
             "metacritic_score",
             "game_genres",
+            "game_platforms",
         )
 
 
