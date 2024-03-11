@@ -193,3 +193,10 @@ def seed_tables():
 def drop_tables():
     db.drop_all()
     print("All tables have been dropped")
+
+
+@db_commands.cli.command("refresh")
+def create_tables():
+    db.drop_all()
+    db.create_all()
+    print("Tables have been recreated")
