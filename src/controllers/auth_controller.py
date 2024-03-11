@@ -63,7 +63,7 @@ def auth_login():
     ):
         # Create JWT
         token = create_access_token(
-            identity=str(user.id), expires_delta=timedelta(days=1)
+            identity=str(user.user_id), expires_delta=timedelta(days=1)
         )
         # Return the token along with the user info
         return {"email": user.email, "token": token, "is_admin": user.is_admin}
