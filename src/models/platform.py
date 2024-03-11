@@ -21,8 +21,13 @@ class PlatformSchema(ma.Schema):
     )
 
     class Meta:
-        fields = ("id", "platform_name", "platform_type", "game_platforms")
+        fields = (
+            "platform_id",
+            "platform_name",
+            "platform_type",
+            "game_platforms",
+        )
 
 
 platform_schema = PlatformSchema()
-platform_schemas = PlatformSchema(many=True)
+platforms_schema = PlatformSchema(many=True)

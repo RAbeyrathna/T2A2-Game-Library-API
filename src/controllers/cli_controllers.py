@@ -54,42 +54,42 @@ def seed_tables():
 
     games = [
         Game(
-            title="Pokemon Diamond",
+            game_title="Pokemon Diamond",
             publisher="Nintendo",
             description="Pokemon Diamond is a traditional Pokemon RPG that takes place in a region called Sinnoh. In the Sinnoh region, there are two Pokemon that symbolize the region. They appear in the Sinnoh reigon's myths and old folklore. One is called Dialga, and is said to have the power to control time.",
             release_date=date(2008, 9, 28),
             metacritic_score=85,
         ),
         Game(
-            title="Balatro",
+            game_title="Balatro",
             publisher="Playstack",
             description="Balatro is a hypnotically satisfying deckbuilder where you play illegal poker hands, discover game-changing jokers, and trigger adrenaline-pumping, outrageous combos. Combine valid poker hands with unique Joker cards in order to create varied synergies and builds",
             release_date=date(2024, 2, 20),
             metacritic_score=90,
         ),
         Game(
-            title="Slay The Spire",
+            game_title="Slay The Spire",
             publisher="Mega Crit Games",
             description="You are an adventurer ascending a spire in order to slay it. Your cards attack and defend and do all sorts of things. Beating enemies allows you to put more cards in your deck and earn gold that can be spent on shops. Each act has sixteen floors, the last of which is a boss fight; beat three acts to win a run",
             release_date=date(2019, 5, 21),
             metacritic_score=89,
         ),
         Game(
-            title="God of War",
+            game_title="God of War",
             publisher="Sony Interactive Entertainment",
             description="His vengeance against the Gods of Olympus behind him, Kratos now lives in the realm of Norse deities and monsters. It's in this harsh, unforgiving world that he must fight to survive, and not only teach his son to do the same… but also prevent him from repeating the Ghost of Sparta's bloodstained mistakes",
             release_date=date(2018, 4, 20),
             metacritic_score=94,
         ),
         Game(
-            title="Psychonauts",
+            game_title="Psychonauts",
             publisher="Double Fine Productions",
             description="Psychonauts is a platform game that incorporates various adventure elements. The player controls the main character Raz in a third-person, three-dimensional view, helping Raz to uncover a mystery at the Psychonauts training camp.",
             release_date=date(2005, 4, 19),
             metacritic_score=88,
         ),
         Game(
-            title="Pyre",
+            game_title="Pyre",
             publisher="Supergiant Games",
             description="A party-based RPG from the creators of Bastion and Transistor. Lead your band of exiles to freedom through a series of mystical competitions in the Campaign, or challenge a friend to a fast-paced ritual showdown in the head-to-head Versus Mode.",
             release_date=date(2017, 7, 25),

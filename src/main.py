@@ -30,4 +30,12 @@ def create_app():
 
     app.register_blueprint(libraries_bp)
 
+    from controllers.platform_controller import platforms_bp
+
+    app.register_blueprint(platforms_bp)
+
+    from controllers.genre_controller import genres_bp
+
+    app.register_blueprint(genres_bp)
+
     return app

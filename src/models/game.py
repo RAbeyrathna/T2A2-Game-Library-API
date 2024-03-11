@@ -6,7 +6,7 @@ class Game(db.Model):
     __tablename__ = "games"
 
     game_id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String, nullable=False)
+    game_title = db.Column(db.String, nullable=False)
     publisher = db.Column(db.String)
     description = db.Column(db.String)
     release_date = db.Column(db.Date)
@@ -38,7 +38,7 @@ class GameSchema(ma.Schema):
     class Meta:
         fields = (
             "game_id",
-            "title",
+            "game_title",
             "publisher",
             "description",
             "release_date",

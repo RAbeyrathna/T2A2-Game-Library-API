@@ -24,4 +24,4 @@ class GenreSchema(ma.Schema):
 
 
 genre_schema = GenreSchema()
-genre_schemas = GenreSchema(many=True)
+genres_schema = GenreSchema(many=True)
