@@ -6,7 +6,7 @@ class Genre(db.Model):
     __tablename__ = "genres"
 
     genre_id = db.Column(db.Integer, primary_key=True)
-    genre_name = db.Column(db.String, nullable=False)
+    genre_name = db.Column(db.String, nullable=False, unique=True)
 
     game_genres = db.relationship(
         "Game_genre", back_populates="genre", cascade="all, delete"

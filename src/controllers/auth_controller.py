@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from flask import Blueprint, request
 from sqlalchemy.exc import IntegrityError
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity
 from psycopg2 import errorcodes
 
 from init import db, bcrypt
@@ -71,3 +71,10 @@ def auth_login():
     else:
         # Return error
         return {"error": "Invalid email or password"}, 401
+
+
+def is_user_admin():
+    user_id = get_jwt_identity()
+    stmt = db.select(User).filter_by(user_id=user_id)
+    user = db.session.scalar(stmt)
+    return user.is_admin

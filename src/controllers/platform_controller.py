@@ -3,7 +3,10 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from init import db
 from models.platform import Platform, platform_schema, platforms_schema
+from models.game_platform import Game_platform, game_platform_schema
+from models.game import Game
 
+from controllers.auth_controller import is_user_admin
 
 platforms_bp = Blueprint("platforms", __name__, url_prefix="/platforms")
 
@@ -20,7 +23,7 @@ def get_all_platforms():
 def get_one_platform(platform_id):  # platform_id = 1
     stmt = db.select(Platform).filter_by(
         platform_id=platform_id
-    )  # select * from user_library where id=2
+    )  # select * from platforms where platform_id=2
     platform = db.session.scalar(stmt)
     if platform:
         return platform_schema.dump(platform)
@@ -28,125 +31,137 @@ def get_one_platform(platform_id):  # platform_id = 1
         return {"error": f"Platform with id {platform_id} not found"}, 404
 
 
-# # http://localhost:8080/cards - POST
-# @cards_bp.route("/", methods=["POST"])
-# @jwt_required()
-# def create_card():
-#     body_data = request.get_json()
-#     # Create a new card model instance
-#     card = Card(
-#         title=body_data.get("title"),
-#         description=body_data.get("description"),
-#         date=date.today(),
-#         status=body_data.get("status"),
-#         priority=body_data.get("priority"),
-#         user_id=get_jwt_identity(),
-#     )
-#     # Add that to the session and commit
-#     db.session.add(card)
-#     db.session.commit()
-#     # return the newly created card
-#     return card_schema.dump(card), 201
+# http://localhost:8080/platforms - POST
+@platforms_bp.route("/", methods=["POST"])
+@jwt_required()
+def create_platform():
+    # Check if user is an admin
+    is_admin = is_user_admin()
+    if not is_admin:
+        return {"error": "User is not authorised to create a platform"}, 403
+    body_data = request.get_json()
+    # Create a new platform model instance
+    platform = Platform(
+        platform_name=body_data.get("platform_name"),
+        platform_type=body_data.get("platform_type"),
+    )
+    # Add that to the session and commit
+    db.session.add(platform)
+    db.session.commit()
+    # return the newly created platform
+    return platform_schema.dump(platform), 201
 
 
-# # https://localhost:8080/cards/6 - DELETE
-# @cards_bp.route("/<int:card_id>", methods=["DELETE"])
-# def delete_card(card_id):
-#     # get the card from the db with id = card_id
-#     stmt = db.select(Card).where(Card.id == card_id)
-#     card = db.session.scalar(stmt)
-#     # if card exists
-#     if card:
-#         # delete the card from the session and commit
-#         db.session.delete(card)
-#         db.session.commit()
-#         # return msg
-#         return {"message": f"Card '{card.title}' deleted successfully"}
-#     # else
-#     else:
-#         # return error msg
-#         return {"error": f"Card with id {card_id} not found"}, 404
+# http://localhost:8080/platforms/3 - DELETE
+@platforms_bp.route("/<int:platform_id>", methods=["DELETE"])
+@jwt_required()
+def delete_platform(platform_id):
+    # Check if user is an admin
+    is_admin = is_user_admin()
+    if not is_admin:
+        return {"error": "User is not authorised to delete a platform"}, 403
+    # get the platform from the db with platform_id = platform_id
+    stmt = db.select(Platform).where(Platform.platform_id == platform_id)
+    platform = db.session.scalar(stmt)
+    # if card exists
+    if platform:
+        # delete the playform from the session and commit
+        db.session.delete(platform)
+        db.session.commit()
+        # return msg
+        return {
+            "message": f"Platform '{platform.platform_name}' has been deleted successfully"
+        }
+    # else
+    else:
+        # return error msg
+        return {"error": f"Platform with id {platform_id} not found"}, 404
 
 
-# # http://localhost:8080/cards/5 - PUT, PATCH
-# @cards_bp.route("/<int:card_id>", methods=["PUT", "PATCH"])
-# def update_card(card_id):
-#     # Get the data to be updated from the body of the request
-#     body_data = request.get_json()
-#     # get the card from the db whose fields need to be updated
-#     stmt = db.select(Card).filter_by(id=card_id)
-#     card = db.session.scalar(stmt)
-#     # if card exists
-#     if card:
-#         # update the fields
-#         card.title = body_data.get("title") or card.title
-#         card.description = body_data.get("description") or card.description
-#         card.status = body_data.get("status") or card.status
-#         card.priority = body_data.get("priority") or card.priority
-#         # commit the changes
-#         db.session.commit()
-#         # return the updated card back
-#         return card_schema.dump(card)
-#     # else
-#     else:
-#         # return error msg
-#         return {"error": f"Card with id {card_id} not found"}, 404
+# http://localhost:8080/platforms/5 - PUT, PATCH
+@platforms_bp.route("/<int:platform_id>", methods=["PUT", "PATCH"])
+@jwt_required()
+def update_platform(platform_id):
+    # Check if user is an admin
+    is_admin = is_user_admin()
+    if not is_admin:
+        return {"error": "User is not authorised to edit a platform"}, 403
+    # Get the data to be updated from the body of the request
+    body_data = request.get_json()
+    # get the card from the db whose fields need to be updated
+    stmt = db.select(Platform).filter_by(platform_id=platform_id)
+    platform = db.session.scalar(stmt)
+    # if platform exists
+    if platform:
+        # update the fields
+        platform.platform_name = (
+            body_data.get("platform_name") or platform.platform_name
+        )
+        platform.platform_type = (
+            body_data.get("platform_type") or platform.platform_type
+        )
+        # commit the changes
+        db.session.commit()
+        # return the updated card back
+        return platform_schema.dump(platform)
+    # else
+    else:
+        # return error msg
+        return {"error": f"Platform with id {platform_id} not found"}, 404
 
 
-# # "/cards/<int:card_id>/comments" -> GET, POST
-# # "/cards/5/comments" -> GET, POST
-
-# # "/cards/<int:card_id>/comments/<int:comment_id>" -> PUT, PATCH, DELETE
-# # "/cards/5/comments/2" -> PUT, PATCH, DELETE
-
-
-# @cards_bp.route("/<int:card_id>/comments", methods=["POST"])
-# @jwt_required()
-# def create_comment(card_id):
-#     body_data = request.get_json()
-#     stmt = db.select(Card).filter_by(id=card_id)
-#     card = db.session.scalar(stmt)
-#     if card:
-#         comment = Comment(
-#             message=body_data.get("message"),
-#             user_id=get_jwt_identity(),
-#             card=card,
-#         )
-#         db.session.add(comment)
-#         db.session.commit()
-#         return comment_schema.dump(comment), 201
-#     else:
-#         return {"error": f"Card with id {card_id} doesn't exist"}, 404
+# http://localhost:8080/platforms/4/1 - POST
+@platforms_bp.route("/<int:platform_id>/<int:game_id>", methods=["POST"])
+@jwt_required()
+def assign_game_platform(platform_id, game_id):
+    # Check if user is an admin
+    is_admin = is_user_admin()
+    if not is_admin:
+        return {
+            "error": "User is not authorised to assign a platform to a game"
+        }, 403
+    # Create a new game_platform model instance
+    game_platform = Game_platform(game_id=game_id, platform_id=platform_id)
+    # Add that to the session and commit
+    db.session.add(game_platform)
+    db.session.commit()
+    # return the newly assigned platform
+    return game_platform_schema.dump(game_platform), 201
 
 
-# @cards_bp.route("/<int:card_id>/comments/<int:comment_id>", methods=["DELETE"])
-# @jwt_required()
-# def delete_comment(card_id, comment_id):
-#     stmt = db.select(Comment).filter_by(id=comment_id)
-#     comment = db.session.scalar(stmt)
-#     if comment and comment.card.id == card_id:
-#         db.session.delete(comment)
-#         db.session.commit()
-#         return {"message": f"Comment with id {comment_id} has been deleted"}
-#     else:
-#         return {
-#             "error": f"Comment with id {comment_id} not found in card with id {card_id}"
-#         }, 404
+# http://localhost:8080/platforms/6 - DELETE
+@platforms_bp.route("/<int:platform_id>/<int:game_id>", methods=["DELETE"])
+@jwt_required()
+def delete_game_platform(platform_id, game_id):
+    # Check if user is an admin
+    is_admin = is_user_admin()
+    if not is_admin:
+        return {
+            "error": "User is not authorised to delete a platform from a game"
+        }, 403
+    # get the platform from the db with platform_id = platform_id
+    stmt = db.select(Game_platform).where(
+        Game_platform.platform_id == platform_id
+        and Game_platform.game_id == game_id
+    )
+    game_platform = db.session.scalar(stmt)
+    stmt = db.select(Game).where(Game.game_id == game_id)
+    game = db.session.scalar(stmt)
+    stmt = db.select(Platform).where(Platform.platform_id == platform_id)
+    platform = db.session.scalar(stmt)
+    # if game_platform exists
+    if game_platform:
+        # delete the game_platform from the session and commit
+        db.session.delete(game_platform)
+        db.session.commit()
+        # return msg
 
-
-# @cards_bp.route(
-#     "/<int:card_id>/comments/<int:comment_id>", methods=["PUT", "PATCH"]
-# )
-# @jwt_required()
-# def edit_comment(card_id, comment_id):
-#     body_data = request.get_json()
-#     stmt = db.select(Comment).filter_by(id=comment_id, card_id=card_id)
-#     comment = db.session.scalar(stmt)
-#     if comment:
-#         comment.message = body_data.get("message") or comment.message
-#         db.session.commit()
-#         return comment_schema.dump(comment)
-#     else:
-#         return {
-#             "error": f"Comment with id {comment_id} not found in card with id {card_id}"
-#         }
+        return {
+            "message": f"Platform '{platform.platform_name}' has been successfully deleted from the game '{game.game_title}'"
+        }
+    # else
+    else:
+        # return error msg
+        return {
+            "error": f"Platform '{platform.platform_name}' is not assigned to the game '{game.game_title}'"
+        }, 404

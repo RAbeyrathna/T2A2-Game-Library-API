@@ -6,7 +6,7 @@ class Platform(db.Model):
     __tablename__ = "platforms"
 
     platform_id = db.Column(db.Integer, primary_key=True)
-    platform_name = db.Column(db.String, nullable=False)
+    platform_name = db.Column(db.String, nullable=False, unique=True)
     platform_type = db.Column(db.String, nullable=False)
 
     game_platforms = db.relationship(

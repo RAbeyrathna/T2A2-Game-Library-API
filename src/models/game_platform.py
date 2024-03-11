@@ -29,12 +29,14 @@ class Game_platform(db.Model):
 class Game_Platform_Schema(ma.Schema):
 
     game = fields.Nested("GameSchema", only=["game_id", "game_title"])
-    platform = fields.Nested("PlatformSchema")
+    platform = fields.Nested(
+        "PlatformSchema", only=["platform_id", "platform_name"]
+    )
 
     class Meta:
-        fields = ("game_platforms_id", "game", "platform")
+        fields = ("game_platforms_id", "platform", "game")
         ordered = True
 
 
-game_genre_schema = Game_Platform_Schema()
-game_genres_schema = Game_Platform_Schema(many=True)
+game_platform_schema = Game_Platform_Schema()
+game_platforms_schema = Game_Platform_Schema(many=True)

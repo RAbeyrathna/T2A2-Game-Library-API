@@ -27,10 +27,11 @@ class Game_genre(db.Model):
 class Game_Genre_Schema(ma.Schema):
 
     game = fields.Nested("GameSchema", only=["game_id", "game_title"])
-    genre = fields.Nested("GenreSchema")
+
+    genre = fields.Nested("GenreSchema", only=["genre_id", "genre_name"])
 
     class Meta:
-        fields = ("game_genres_id", "game", "genre")
+        fields = ("game_genres_id", "genre", "game")
         ordered = True
 
 
