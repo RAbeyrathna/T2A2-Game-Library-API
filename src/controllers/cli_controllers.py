@@ -10,6 +10,7 @@ from models.genre import Genre
 from models.user_library import User_library
 from models.game_genre import Game_genre
 from models.game_platform import Game_platform
+from models.library_item import Library_item
 
 db_commands = Blueprint("db", __name__)
 
@@ -183,6 +184,28 @@ def seed_tables():
     ]
 
     db.session.add_all(game_platforms)
+
+    library_entries = [
+        Library_item(
+            user_library=user_libraries[1],
+            game=games[1],
+            status="On-Hold",
+            score="80",
+        ),
+        Library_item(
+            user_library=user_libraries[0],
+            game=games[0],
+            status="On-Hold",
+        ),
+        Library_item(
+            user_library=user_libraries[0],
+            game=games[1],
+            status="Playing",
+            score="75",
+        ),
+    ]
+
+    db.session.add_all(library_entries)
 
     db.session.commit()
 

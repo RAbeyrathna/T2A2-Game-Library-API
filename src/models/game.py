@@ -20,6 +20,10 @@ class Game(db.Model):
         "Game_platform", back_populates="game", cascade="all, delete"
     )
 
+    library_items = db.relationship(
+        "Library_item", back_populates="game", cascade="all, delete"
+    )
+
 
 class GameSchema(ma.Schema):
 
