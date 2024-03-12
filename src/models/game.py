@@ -49,4 +49,4 @@ class GameSchema(ma.Schema):
 
 
 game_schema = GameSchema()
-game_schemas = GameSchema(many=True)
+games_schema = GameSchema(many=True)

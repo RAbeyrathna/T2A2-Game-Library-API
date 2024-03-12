@@ -38,4 +38,8 @@ def create_app():
 
     app.register_blueprint(genres_bp)
 
+    from controllers.game_controller import games_bp
+
+    app.register_blueprint(games_bp)
+
     return app

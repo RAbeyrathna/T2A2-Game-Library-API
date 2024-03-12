@@ -63,7 +63,7 @@ def delete_platform(platform_id):
     # get the platform from the db with platform_id = platform_id
     stmt = db.select(Platform).where(Platform.platform_id == platform_id)
     platform = db.session.scalar(stmt)
-    # if card exists
+    # if platform exists
     if platform:
         # delete the playform from the session and commit
         db.session.delete(platform)
@@ -88,7 +88,7 @@ def update_platform(platform_id):
         return {"error": "User is not authorised to edit a platform"}, 403
     # Get the data to be updated from the body of the request
     body_data = request.get_json()
-    # get the card from the db whose fields need to be updated
+    # get the platform from the db whose fields need to be updated
     stmt = db.select(Platform).filter_by(platform_id=platform_id)
     platform = db.session.scalar(stmt)
     # if platform exists
@@ -102,7 +102,7 @@ def update_platform(platform_id):
         )
         # commit the changes
         db.session.commit()
-        # return the updated card back
+        # return the updated platform back
         return platform_schema.dump(platform)
     # else
     else:

@@ -61,7 +61,7 @@ def delete_genre(genre_id):
     # get the genre from the db with genre_id = genre_id
     stmt = db.select(Genre).where(Genre.genre_id == genre_id)
     genre = db.session.scalar(stmt)
-    # if card exists
+    # if genre exists
     if genre:
         # delete the genre from the session and commit
         db.session.delete(genre)
@@ -86,7 +86,7 @@ def update_genre(genre_id):
         return {"error": "User is not authorised to edit a genre"}, 403
     # Get the data to be updated from the body of the request
     body_data = request.get_json()
-    # get the card from the db whose fields need to be updated
+    # get the genre from the db whose fields need to be updated
     stmt = db.select(Genre).filter_by(genre_id=genre_id)
     genre = db.session.scalar(stmt)
     # if genre exists
@@ -95,7 +95,7 @@ def update_genre(genre_id):
         genre.genre_name = body_data.get("genre_name") or genre.genre_name
         # commit the changes
         db.session.commit()
-        # return the updated card back
+        # return the updated genre back
         return genre_schema.dump(genre)
     # else
     else:
