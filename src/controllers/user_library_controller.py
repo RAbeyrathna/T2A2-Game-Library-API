@@ -7,7 +7,11 @@ from models.user_library import (
     user_library_schema,
     user_libraries_schema,
 )
-from models.library_item import Library_item, library_item_schema
+from models.library_item import (
+    Library_item,
+    library_item_schema,
+    library_items_schema,
+)
 from models.game import Game
 
 from controllers.auth_controller import is_user_admin
@@ -58,6 +62,29 @@ def create_library_entry(library_id):
     db.session.commit()
     # return the newly created library_item
     return library_item_schema.dump(library_entry), 201
+
+
+# # http://localhost:8080/library/entry/all - GET
+@libraries_bp.route("/entry/all")
+def get_all_library_entries():
+    stmt = db.select(Library_item)
+    library_items = db.session.scalars(stmt)
+    return library_items_schema.dump(library_items)
+
+
+# # http://localhost:8080/library/entry/2 - GET
+@libraries_bp.route("/entry/<int:library_item_id>")
+def get_one_library_entry(library_item_id):  # library_item_id = 2
+    stmt = db.select(Library_item).filter_by(
+        library_item_id=library_item_id
+    )  # select * from user_library where id=2
+    library_item = db.session.scalar(stmt)
+    if library_item:
+        return library_item_schema.dump(library_item)
+    else:
+        return {
+            "error": f"Library item with id {library_item_id} not found"
+        }, 404
 
 
 @libraries_bp.route("/entry/<int:library_item_id>", methods=["DELETE"])
@@ -121,7 +148,6 @@ def patch_library_item(library_item_id):
         library_entry.status = body_data.get("status") or library_entry.status
         library_entry.score = body_data.get("score") or library_entry.score
         db.session.commit()
-
         return library_item_schema.dump(library_entry)
     else:
         return {
