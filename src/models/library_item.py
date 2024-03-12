@@ -35,11 +35,13 @@ class Library_item(db.Model):
 
 class Library_Item_Schema(ma.Schema):
 
-    user_library = fields.Nested("User_Library_Schema")
+    user_library = fields.Nested(
+        "User_Library_Schema", exclude=["library_items"]
+    )
     game = fields.Nested("GameSchema", only=["game_id", "game_title"])
 
     class Meta:
-        fields = ("library_item_id", "status", "score", "user_library", "game")
+        fields = ("user_library", "library_item_id", "game", "status", "score")
         ordered = True
 
 

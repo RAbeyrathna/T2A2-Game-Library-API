@@ -31,3 +31,4 @@ class User_Library_Schema(ma.Schema):
 
 
 user_library_schema = User_Library_Schema()
+user_libraries_schema = User_Library_Schema(many=True)

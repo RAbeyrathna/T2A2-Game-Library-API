@@ -1,13 +1,8 @@
 from flask import Blueprint, request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required
 
 from init import db
 from models.game import Game, game_schema, games_schema
-
-from models.platform import Platform
-from models.genre import Genre
-from models.game_platform import Game_platform, game_platform_schema
-from models.game_genre import Game_genre, game_genre_schema
 
 from controllers.auth_controller import is_user_admin
 

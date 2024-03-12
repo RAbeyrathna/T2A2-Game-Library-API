@@ -2,10 +2,25 @@ from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from init import db
-from models.user_library import User_library, user_library_schema
+from models.user_library import (
+    User_library,
+    user_library_schema,
+    user_libraries_schema,
+)
+from models.library_item import Library_item, library_item_schema
+from models.game import Game
 
+from controllers.auth_controller import is_user_admin
 
 libraries_bp = Blueprint("cards", __name__, url_prefix="/library")
+
+
+# # http://localhost:8080/library/all - GET
+@libraries_bp.route("/all")
+def get_all_libraries():
+    stmt = db.select(User_library)
+    libraries = db.session.scalars(stmt)
+    return user_libraries_schema.dump(libraries)
 
 
 # # http://localhost:8080/library/2 - GET
@@ -21,125 +36,139 @@ def get_one_library(library_id):  # library_id = 2
         return {"error": f"User Library with id {library_id} not found"}, 404
 
 
-# # http://localhost:8080/cards - POST
-# @cards_bp.route("/", methods=["POST"])
+# http://localhost:8080/library/3 - POST
+@libraries_bp.route("/<int:library_id>", methods=["POST"])
+@jwt_required()
+def create_library_entry(library_id):
+    # Check if user owns the library
+    is_library_owner = check_library_owner(library_id)
+    is_admin = is_user_admin()
+    if not is_library_owner and not is_admin:
+        return {"error": "User is not the owner of this library"}, 403
+    body_data = request.get_json()
+    # Create a new library_item model instance
+    library_entry = Library_item(
+        user_library_id=library_id,
+        game_id=body_data.get("game_id"),
+        status=body_data.get("status"),
+        score=body_data.get("score"),
+    )
+    # Add that to the session and commit
+    db.session.add(library_entry)
+    db.session.commit()
+    # return the newly created library_item
+    return library_item_schema.dump(library_entry), 201
+
+
+@libraries_bp.route("/<int:library_item_id>", methods=["DELETE"])
+@jwt_required()
+def delete_library_item(library_item_id):
+    # Query the library item to be deleted based on library_item_id
+    stmt = db.select(Library_item).where(
+        Library_item.library_item_id == library_item_id
+    )
+    library_entry = db.session.scalar(stmt)
+
+    if library_entry:
+        # Check if user owns the library item
+        is_library_owner = check_library_owner(library_entry.user_library_id)
+        is_admin = is_user_admin()
+        if not is_library_owner and not is_admin:
+            return {
+                "error": "User is not the owner of this library entry"
+            }, 403
+
+        # Get game title for user message before deleting the library entry
+        stmt = db.select(Game).where(Game.game_id == library_entry.game_id)
+        game = db.session.scalar(stmt)
+        game_title = game.game_title
+
+        # Delete the library item
+        db.session.delete(library_entry)
+        db.session.commit()
+
+        return {
+            "message": f"Game '{game_title}' has been deleted from your library successfully"
+        }
+    else:
+        return {
+            "error": f"Library item with ID {library_item_id} does not exist in your library"
+        }, 404
+
+
+@libraries_bp.route("/<int:library_item_id>", methods=["PUT", "PATCH"])
+@jwt_required()
+def patch_library_item(library_item_id):
+    # Get the JSON data from the request
+    body_data = request.get_json()
+
+    # Query the library item to be patched
+    stmt = db.select(Library_item).where(
+        Library_item.library_item_id == library_item_id
+    )
+    library_entry = db.session.scalar(stmt)
+
+    if library_entry:
+        # Check if user owns the library item
+        is_library_owner = check_library_owner(library_entry.user_library_id)
+        is_admin = is_user_admin()
+        if not is_library_owner and not is_admin:
+            return {
+                "error": "User is not the owner of this library entry"
+            }, 403
+
+        # Update the library item
+        library_entry.status = body_data.get("status") or library_entry.status
+        library_entry.score = body_data.get("score") or library_entry.score
+        db.session.commit()
+
+        return library_item_schema.dump(library_entry)
+    else:
+        return {
+            "error": f"Library item with ID {library_item_id} does not exist"
+        }, 404
+
+
+def check_library_owner(library_id):
+    current_user_id = int(get_jwt_identity())
+    stmt = db.select(User_library).filter_by(user_library_id=library_id)
+    user_library = db.session.scalar(stmt)
+    if user_library and user_library.user_id == current_user_id:
+        return True
+    else:
+        return False
+
+
+# # Delete library item using library_id and game_id in route
+# @libraries_bp.route("/<int:library_id>/<int:game_id>", methods=["DELETE"])
 # @jwt_required()
-# def create_card():
-#     body_data = request.get_json()
-#     # Create a new card model instance
-#     card = Card(
-#         title=body_data.get("title"),
-#         description=body_data.get("description"),
-#         date=date.today(),
-#         status=body_data.get("status"),
-#         priority=body_data.get("priority"),
-#         user_id=get_jwt_identity(),
+# def delete_library_item(library_id, game_id):
+#     # Check if user owns the library
+#     is_library_owner = check_library_owner(library_id)
+#     if not is_library_owner:
+#         return {"error": "User is not the owner of this library"}, 403
+
+#     # Query the library item to be deleted
+#     stmt = db.select(Library_item).where(
+#         Library_item.user_library_id == library_id,
+#         Library_item.game_id == game_id,
 #     )
-#     # Add that to the session and commit
-#     db.session.add(card)
-#     db.session.commit()
-#     # return the newly created card
-#     return card_schema.dump(card), 201
+#     library_entry = db.session.scalar(stmt)
 
+#     # Get game title for user message
+#     stmt = db.select(Game).where(Game.game_id == game_id)
+#     game = db.session.scalar(stmt)
+#     game_title = game.game_title
 
-# # https://localhost:8080/cards/6 - DELETE
-# @cards_bp.route("/<int:card_id>", methods=["DELETE"])
-# def delete_card(card_id):
-#     # get the card from the db with id = card_id
-#     stmt = db.select(Card).where(Card.id == card_id)
-#     card = db.session.scalar(stmt)
-#     # if card exists
-#     if card:
-#         # delete the card from the session and commit
-#         db.session.delete(card)
+#     if library_entry:
+#         # Delete the library item
+#         db.session.delete(library_entry)
 #         db.session.commit()
-#         # return msg
-#         return {"message": f"Card '{card.title}' deleted successfully"}
-#     # else
-#     else:
-#         # return error msg
-#         return {"error": f"Card with id {card_id} not found"}, 404
 
-
-# # http://localhost:8080/cards/5 - PUT, PATCH
-# @cards_bp.route("/<int:card_id>", methods=["PUT", "PATCH"])
-# def update_card(card_id):
-#     # Get the data to be updated from the body of the request
-#     body_data = request.get_json()
-#     # get the card from the db whose fields need to be updated
-#     stmt = db.select(Card).filter_by(id=card_id)
-#     card = db.session.scalar(stmt)
-#     # if card exists
-#     if card:
-#         # update the fields
-#         card.title = body_data.get("title") or card.title
-#         card.description = body_data.get("description") or card.description
-#         card.status = body_data.get("status") or card.status
-#         card.priority = body_data.get("priority") or card.priority
-#         # commit the changes
-#         db.session.commit()
-#         # return the updated card back
-#         return card_schema.dump(card)
-#     # else
-#     else:
-#         # return error msg
-#         return {"error": f"Card with id {card_id} not found"}, 404
-
-
-# # "/cards/<int:card_id>/comments" -> GET, POST
-# # "/cards/5/comments" -> GET, POST
-
-# # "/cards/<int:card_id>/comments/<int:comment_id>" -> PUT, PATCH, DELETE
-# # "/cards/5/comments/2" -> PUT, PATCH, DELETE
-
-
-# @cards_bp.route("/<int:card_id>/comments", methods=["POST"])
-# @jwt_required()
-# def create_comment(card_id):
-#     body_data = request.get_json()
-#     stmt = db.select(Card).filter_by(id=card_id)
-#     card = db.session.scalar(stmt)
-#     if card:
-#         comment = Comment(
-#             message=body_data.get("message"),
-#             user_id=get_jwt_identity(),
-#             card=card,
-#         )
-#         db.session.add(comment)
-#         db.session.commit()
-#         return comment_schema.dump(comment), 201
-#     else:
-#         return {"error": f"Card with id {card_id} doesn't exist"}, 404
-
-
-# @cards_bp.route("/<int:card_id>/comments/<int:comment_id>", methods=["DELETE"])
-# @jwt_required()
-# def delete_comment(card_id, comment_id):
-#     stmt = db.select(Comment).filter_by(id=comment_id)
-#     comment = db.session.scalar(stmt)
-#     if comment and comment.card.id == card_id:
-#         db.session.delete(comment)
-#         db.session.commit()
-#         return {"message": f"Comment with id {comment_id} has been deleted"}
-#     else:
 #         return {
-#             "error": f"Comment with id {comment_id} not found in card with id {card_id}"
-#         }, 404
-
-
-# @cards_bp.route(
-#     "/<int:card_id>/comments/<int:comment_id>", methods=["PUT", "PATCH"]
-# )
-# @jwt_required()
-# def edit_comment(card_id, comment_id):
-#     body_data = request.get_json()
-#     stmt = db.select(Comment).filter_by(id=comment_id, card_id=card_id)
-#     comment = db.session.scalar(stmt)
-#     if comment:
-#         comment.message = body_data.get("message") or comment.message
-#         db.session.commit()
-#         return comment_schema.dump(comment)
-#     else:
-#         return {
-#             "error": f"Comment with id {comment_id} not found in card with id {card_id}"
+#             "message": f"Game '{game_title}' has been deleted from your library successfully"
 #         }
+#     else:
+#         return {
+#             "error": f"Game with ID {game_id} does not exist in your library"
+#         }, 404
