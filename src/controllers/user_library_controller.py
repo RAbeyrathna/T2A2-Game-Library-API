@@ -60,7 +60,7 @@ def create_library_entry(library_id):
     return library_item_schema.dump(library_entry), 201
 
 
-@libraries_bp.route("/<int:library_item_id>", methods=["DELETE"])
+@libraries_bp.route("/entry/<int:library_item_id>", methods=["DELETE"])
 @jwt_required()
 def delete_library_item(library_item_id):
     # Query the library item to be deleted based on library_item_id
@@ -92,11 +92,11 @@ def delete_library_item(library_item_id):
         }
     else:
         return {
-            "error": f"Library item with ID {library_item_id} does not exist in your library"
+            "error": f"Library item with ID {library_item_id} does not exist"
         }, 404
 
 
-@libraries_bp.route("/<int:library_item_id>", methods=["PUT", "PATCH"])
+@libraries_bp.route("/entry/<int:library_item_id>", methods=["PUT", "PATCH"])
 @jwt_required()
 def patch_library_item(library_item_id):
     # Get the JSON data from the request
