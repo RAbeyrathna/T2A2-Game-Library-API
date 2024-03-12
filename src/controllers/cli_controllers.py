@@ -95,62 +95,74 @@ def seed_tables():
             release_date=date(2017, 7, 25),
             metacritic_score=85,
         ),
+        Game(
+            game_title="The Legend of Zelda: Breath of the Wild",
+            publisher="Nintendo",
+            description="A game that breaks conventions to become an open-world masterpiece, "
+            "Breath of the Wild dares to be different and delivers a grand adventure "
+            "that redefines the Zelda series. Set in the land of Hyrule, players "
+            "explore the vast landscapes, solve puzzles, and battle formidable enemies.",
+            release_date=date(2017, 3, 3),
+            metacritic_score=97,
+        ),
+        Game(
+            game_title="Cyberpunk 2077",
+            publisher="CD Projekt",
+            description="In a dystopian future where cybernetic enhancements are commonplace, "
+            "players take on the role of V, a mercenary navigating the streets of Night City. "
+            "Featuring deep storytelling and immersive gameplay, Cyberpunk 2077 promises "
+            "a gripping adventure filled with action and choice.",
+            release_date=date(2020, 12, 10),
+            metacritic_score=70,
+        ),
     ]
+
     db.session.add_all(games)
 
     genres = [
-        Genre(genre_name="Action"),  # God of War
-        Genre(genre_name="Adventure"),  # Pokemon Diamond
-        Genre(genre_name="Role-Playing"),  # Pokemon Diamond and Pyre
+        Genre(genre_name="Action"),
+        Genre(genre_name="Adventure"),
+        Genre(genre_name="Role-Playing"),
         Genre(genre_name="Simulation"),
-        Genre(genre_name="Strategy"),  # Slay The Spire
+        Genre(genre_name="Strategy"),
         Genre(genre_name="Sports"),
-        Genre(genre_name="Puzzle"),  # Psychonauts
+        Genre(genre_name="Puzzle"),
         Genre(genre_name="Idle"),
         Genre(genre_name="Racing"),
         Genre(genre_name="Fighting"),
         Genre(genre_name="Shooter"),
         Genre(genre_name="MMO"),
-        Genre(genre_name="Platformer"),  # Psychonauts
+        Genre(genre_name="Platformer"),
         Genre(genre_name="Music"),
         Genre(genre_name="Horror"),
         Genre(genre_name="Survival"),
         Genre(genre_name="Battle Royale"),
         Genre(genre_name="Visual Novel"),
         Genre(genre_name="Rhythm"),
-        Genre(genre_name="Roguelike"),  # Slay The Spire, Balatro
+        Genre(genre_name="Roguelike"),
         Genre(genre_name="Educational"),
-        Genre(genre_name="Card & Board Game"),  # Balatro
+        Genre(genre_name="Card & Board Game"),
         Genre(genre_name="MOBA"),
         Genre(genre_name="Point & Click"),
         Genre(genre_name="Sandbox"),
         Genre(genre_name="Tower Defense"),
         Genre(genre_name="Text Adventure"),
-        Genre(genre_name="Hack and Slash"),  # God of War
+        Genre(genre_name="Hack and Slash"),
         Genre(genre_name="Stealth"),
         Genre(genre_name="Flight Simulation"),
         Genre(genre_name="Narrative"),
-        Genre(genre_name="Fantasy"),  # God of War
-        Genre(genre_name="Indie"),  # Balatro
-        Genre(genre_name="Mythology"),  # God of War
-        Genre(genre_name="Tactical"),  # Slay the Spire, Balatro
+        Genre(genre_name="Fantasy"),
+        Genre(genre_name="Indie"),
+        Genre(genre_name="Mythology"),
+        Genre(genre_name="Tactical"),
         Genre(genre_name="Party"),
-        Genre(genre_name="Turn-Based"),  # Slay the Spire
+        Genre(genre_name="Turn-Based"),
         Genre(genre_name="Action RPG"),
-        Genre(genre_name="Deck Building"),  # Slay the Spire, Balatro
+        Genre(genre_name="Deck Building"),
         Genre(genre_name="Open World"),
     ]
 
     db.session.add_all(genres)
-
-    game_genres = [
-        Game_genre(game=games[0], genre=genres[0]),
-        Game_genre(game=games[0], genre=genres[1]),
-        Game_genre(game=games[0], genre=genres[2]),
-        Game_genre(game=games[1], genre=genres[1]),
-    ]
-
-    db.session.add_all(game_genres)
 
     platforms = [
         Platform(platform_name="Windows", platform_type="PC"),
@@ -175,37 +187,78 @@ def seed_tables():
 
     db.session.add_all(platforms)
 
+    game_genres = [
+        # Pokemon Diamond
+        Game_genre(game=games[0], genre=genres[1]),  # Adventure
+        Game_genre(game=games[0], genre=genres[2]),  # Role-Playing
+        # Balatro
+        Game_genre(game=games[1], genre=genres[38]),  # Deck Building
+        Game_genre(game=games[1], genre=genres[4]),  # Strategy
+        Game_genre(game=games[1], genre=genres[34]),  # Indie
+        Game_genre(game=games[1], genre=genres[19]),  # Roguelike
+        # Slay The Spire
+        Game_genre(game=games[2], genre=genres[38]),  # Deck Building
+        Game_genre(game=games[2], genre=genres[19]),  # Roguelike
+        Game_genre(game=games[2], genre=genres[4]),  # Strategy
+        # God of War
+        Game_genre(game=games[3], genre=genres[0]),  # Action
+        Game_genre(game=games[3], genre=genres[27]),  # Fantasy
+        Game_genre(game=games[3], genre=genres[33]),  # Mythology
+        # Psychonauts
+        Game_genre(game=games[4], genre=genres[12]),  # Platformer
+        Game_genre(game=games[4], genre=genres[30]),  # Narrative
+        # Pyre
+        Game_genre(game=games[5], genre=genres[2]),  # Role-Playing
+        Game_genre(game=games[5], genre=genres[4]),  # Strategy
+        # The Legend of Zelda: Breath of the Wild
+        Game_genre(game=games[6], genre=genres[1]),  # Adventure
+        Game_genre(game=games[6], genre=genres[39]),  # Open World
+        # Cyberpunk 2077
+        Game_genre(game=games[7], genre=genres[0]),  # Action
+        Game_genre(game=games[7], genre=genres[30]),  # Narrative
+        Game_genre(game=games[7], genre=genres[37]),  # Action RPG
+    ]
+
+    db.session.add_all(game_genres)
+
     game_platforms = [
-        Game_platform(game=games[0], platform=platforms[0]),
-        Game_platform(game=games[0], platform=platforms[1]),
-        Game_platform(game=games[1], platform=platforms[0]),
-        Game_platform(game=games[2], platform=platforms[1]),
-        Game_platform(game=games[2], platform=platforms[2]),
+        # Pokemon Diamond
+        Game_platform(game=games[0], platform=platforms[4]),  # Nintendo DS
+        # Balatro
+        Game_platform(game=games[1], platform=platforms[0]),  # Windows
+        Game_platform(game=games[1], platform=platforms[1]),  # Linux
+        Game_platform(game=games[1], platform=platforms[2]),  # Mac OS
+        # Slay The Spire
+        Game_platform(game=games[2], platform=platforms[0]),  # Windows
+        Game_platform(game=games[2], platform=platforms[1]),  # Linux
+        Game_platform(game=games[2], platform=platforms[4]),  # Nintendo DS
+        # God of War
+        Game_platform(game=games[3], platform=platforms[0]),  # Windows
+        Game_platform(game=games[3], platform=platforms[7]),  # PlayStation 3
+        Game_platform(game=games[3], platform=platforms[8]),  # PlayStation 4
+        Game_platform(game=games[3], platform=platforms[9]),  # PlayStation 5
+        # Psychonauts
+        Game_platform(game=games[4], platform=platforms[14]),  # Nintendo 64
+        Game_platform(game=games[4], platform=platforms[15]),  # Nintendo Wii
+        Game_platform(game=games[4], platform=platforms[16]),  # Nintendo Wii U
+        # Pyre
+        Game_platform(game=games[5], platform=platforms[0]),  # Windows
+        Game_platform(game=games[5], platform=platforms[1]),  # Linux
+        Game_platform(
+            game=games[5], platform=platforms[17]
+        ),  # Nintendo Switch
+        # The Legend of Zelda: Breath of the Wild
+        Game_platform(
+            game=games[6], platform=platforms[17]
+        ),  # Nintendo Switch
+        # Cyberpunk 2077
+        Game_platform(game=games[7], platform=platforms[0]),  # Windows
+        Game_platform(game=games[7], platform=platforms[11]),  # Xbox One
+        Game_platform(game=games[7], platform=platforms[12]),  # Xbox Series X
+        Game_platform(game=games[7], platform=platforms[13]),  # Xbox Series S
     ]
 
     db.session.add_all(game_platforms)
-
-    library_entries = [
-        Library_item(
-            user_library=user_libraries[1],
-            game=games[1],
-            status="On-Hold",
-            score="80",
-        ),
-        Library_item(
-            user_library=user_libraries[0],
-            game=games[0],
-            status="On-Hold",
-        ),
-        Library_item(
-            user_library=user_libraries[0],
-            game=games[1],
-            status="Playing",
-            score="75",
-        ),
-    ]
-
-    db.session.add_all(library_entries)
 
     db.session.commit()
 
@@ -218,8 +271,8 @@ def drop_tables():
     print("All tables have been dropped")
 
 
-@db_commands.cli.command("refresh")
-def create_tables():
+@db_commands.cli.command("init")
+def initalise_database():
     db.drop_all()
     db.create_all()
-    print("Tables have been recreated")
+    print("Flask application has been initialised")
