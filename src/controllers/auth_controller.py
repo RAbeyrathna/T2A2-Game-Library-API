@@ -3,6 +3,7 @@ import functools
 
 from flask import Blueprint, request
 from flask_jwt_extended import create_access_token, get_jwt_identity
+from flask_jwt_extended import jwt_required
 
 from init import db, bcrypt
 from models.user import User, user_schema
