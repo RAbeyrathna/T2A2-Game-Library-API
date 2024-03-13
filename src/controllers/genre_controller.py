@@ -6,7 +6,7 @@ from models.genre import Genre, genre_schema, genres_schema
 from models.game_genre import Game_genre, game_genre_schema
 from models.game import Game
 
-from controllers.auth_controller import is_user_admin
+from controllers.auth_controller import authorise_as_admin
 
 genres_bp = Blueprint("genres", __name__, url_prefix="/genres")
 
@@ -35,11 +35,8 @@ def get_one_genre(genre_id):  # genre_id = 1
 # http://localhost:8080/genres - POST
 @genres_bp.route("/", methods=["POST"])
 @jwt_required()
+@authorise_as_admin
 def create_genre():
-    # Check if user is an admin
-    is_admin = is_user_admin()
-    if not is_admin:
-        return {"error": "User is not authorised to create a genre"}, 403
     body_data = genre_schema.load(request.get_json())
     # Create a new genre model instance
     genre = Genre(genre_name=body_data.get("genre_name"))
@@ -53,11 +50,8 @@ def create_genre():
 # http://localhost:8080/genres/6 - DELETE
 @genres_bp.route("/<int:genre_id>", methods=["DELETE"])
 @jwt_required()
+@authorise_as_admin
 def delete_genre(genre_id):
-    # Check if user is an admin
-    is_admin = is_user_admin()
-    if not is_admin:
-        return {"error": "User is not authorised to delete a genre"}, 403
     # get the genre from the db with genre_id = genre_id
     stmt = db.select(Genre).where(Genre.genre_id == genre_id)
     genre = db.session.scalar(stmt)
@@ -79,11 +73,8 @@ def delete_genre(genre_id):
 # http://localhost:8080/genres/5 - PUT, PATCH
 @genres_bp.route("/<int:genre_id>", methods=["PUT", "PATCH"])
 @jwt_required()
+@authorise_as_admin
 def update_genre(genre_id):
-    # Check if user is an admin
-    is_admin = is_user_admin()
-    if not is_admin:
-        return {"error": "User is not authorised to edit a genre"}, 403
     # Get the data to be updated from the body of the request
     body_data = genre_schema.load(request.get_json(), partial=True)
     # get the genre from the db whose fields need to be updated
@@ -106,13 +97,8 @@ def update_genre(genre_id):
 # http://localhost:8080/genres/4/game/1 - POST
 @genres_bp.route("/<int:genre_id>/game/<int:game_id>", methods=["POST"])
 @jwt_required()
+@authorise_as_admin
 def assign_game_genre(genre_id, game_id):
-    # Check if user is an admin
-    is_admin = is_user_admin()
-    if not is_admin:
-        return {
-            "error": "User is not authorised to assign a genre to a game"
-        }, 403
     # Create a new game_genre model instance
     game_genre = Game_genre(game_id=game_id, genre_id=genre_id)
     # Add that to the session and commit
@@ -125,13 +111,8 @@ def assign_game_genre(genre_id, game_id):
 # http://localhost:8080/genres/game/6 - DELETE
 @genres_bp.route("/<int:genre_id>/game/<int:game_id>", methods=["DELETE"])
 @jwt_required()
+@authorise_as_admin
 def delete_game_genre(genre_id, game_id):
-    # Check if user is an admin
-    is_admin = is_user_admin()
-    if not is_admin:
-        return {
-            "error": "User is not authorised to delete a genre from a game"
-        }, 403
     # get the genre from the db with genre_id = genre_id
     stmt = db.select(Game_genre).where(
         Game_genre.genre_id == genre_id and Game_genre.game_id == game_id

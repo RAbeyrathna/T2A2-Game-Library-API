@@ -6,7 +6,7 @@ from models.platform import Platform, platform_schema, platforms_schema
 from models.game_platform import Game_platform, game_platform_schema
 from models.game import Game
 
-from controllers.auth_controller import is_user_admin
+from controllers.auth_controller import authorise_as_admin
 
 platforms_bp = Blueprint("platforms", __name__, url_prefix="/platforms")
 
@@ -34,11 +34,8 @@ def get_one_platform(platform_id):  # platform_id = 1
 # http://localhost:8080/platforms - POST
 @platforms_bp.route("/", methods=["POST"])
 @jwt_required()
+@authorise_as_admin
 def create_platform():
-    # Check if user is an admin
-    is_admin = is_user_admin()
-    if not is_admin:
-        return {"error": "User is not authorised to create a platform"}, 403
     body_data = platform_schema.load(request.get_json())
     # Create a new platform model instance
     platform = Platform(
@@ -55,11 +52,8 @@ def create_platform():
 # http://localhost:8080/platforms/3 - DELETE
 @platforms_bp.route("/<int:platform_id>", methods=["DELETE"])
 @jwt_required()
+@authorise_as_admin
 def delete_platform(platform_id):
-    # Check if user is an admin
-    is_admin = is_user_admin()
-    if not is_admin:
-        return {"error": "User is not authorised to delete a platform"}, 403
     # get the platform from the db with platform_id = platform_id
     stmt = db.select(Platform).where(Platform.platform_id == platform_id)
     platform = db.session.scalar(stmt)
@@ -81,11 +75,8 @@ def delete_platform(platform_id):
 # http://localhost:8080/platforms/5 - PUT, PATCH
 @platforms_bp.route("/<int:platform_id>", methods=["PUT", "PATCH"])
 @jwt_required()
+@authorise_as_admin
 def update_platform(platform_id):
-    # Check if user is an admin
-    is_admin = is_user_admin()
-    if not is_admin:
-        return {"error": "User is not authorised to edit a platform"}, 403
     # Get the data to be updated from the body of the request
     body_data = platform_schema.load(request.get_json(), partial=True)
     # get the platform from the db whose fields need to be updated
@@ -113,13 +104,8 @@ def update_platform(platform_id):
 # http://localhost:8080/platforms/4/game/1 - POST
 @platforms_bp.route("/<int:platform_id>/game/<int:game_id>", methods=["POST"])
 @jwt_required()
+@authorise_as_admin
 def assign_game_platform(platform_id, game_id):
-    # Check if user is an admin
-    is_admin = is_user_admin()
-    if not is_admin:
-        return {
-            "error": "User is not authorised to assign a platform to a game"
-        }, 403
     # Create a new game_platform model instance
     game_platform = Game_platform(game_id=game_id, platform_id=platform_id)
     # Add that to the session and commit
@@ -134,13 +120,8 @@ def assign_game_platform(platform_id, game_id):
     "/<int:platform_id>/game/<int:game_id>", methods=["DELETE"]
 )
 @jwt_required()
+@authorise_as_admin
 def delete_game_platform(platform_id, game_id):
-    # Check if user is an admin
-    is_admin = is_user_admin()
-    if not is_admin:
-        return {
-            "error": "User is not authorised to delete a platform from a game"
-        }, 403
     # get the platform from the db with platform_id = platform_id
     stmt = db.select(Game_platform).where(
         Game_platform.platform_id == platform_id

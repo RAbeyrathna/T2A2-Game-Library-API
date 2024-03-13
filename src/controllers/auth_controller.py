@@ -1,4 +1,5 @@
 from datetime import timedelta
+import functools
 
 from flask import Blueprint, request
 from flask_jwt_extended import create_access_token, get_jwt_identity
@@ -65,3 +66,20 @@ def is_user_admin():
     stmt = db.select(User).filter_by(user_id=user_id)
     user = db.session.scalar(stmt)
     return user.is_admin
+
+
+def authorise_as_admin(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        user_id = get_jwt_identity()
+        stmt = db.select(User).filter_by(user_id=user_id)
+        user = db.session.scalar(stmt)
+        if user.is_admin:
+            # Run the decorated function if user is admin
+            return fn(*args, **kwargs)
+        else:
+            return {
+                "error": "User account does not have admin privilleges"
+            }, 403
+
+    return wrapper

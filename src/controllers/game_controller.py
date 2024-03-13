@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required
 from init import db
 from models.game import Game, game_schema, games_schema
 
-from controllers.auth_controller import is_user_admin
+from controllers.auth_controller import authorise_as_admin
 
 games_bp = Blueprint("games", __name__, url_prefix="/games")
 
@@ -33,11 +33,8 @@ def get_one_game(game_id):  # game_id = 1
 # http://localhost:8080/games - POST
 @games_bp.route("/", methods=["POST"])
 @jwt_required()
+@authorise_as_admin
 def create_game():
-    # Check if user is an admin
-    is_admin = is_user_admin()
-    if not is_admin:
-        return {"error": "User is not authorised to create a game"}, 403
     body_data = game_schema.load(request.get_json())
     # Create a new game model instance
     game = Game(
@@ -57,12 +54,8 @@ def create_game():
 # http://localhost:8080/games/6 - DELETE
 @games_bp.route("/<int:game_id>", methods=["DELETE"])
 @jwt_required()
+@authorise_as_admin
 def delete_game(game_id):
-    # Check if user is an admin
-    is_admin = is_user_admin()
-    if not is_admin:
-        return {"error": "User is not authorised to delete a game"}, 403
-    # get the game from the db with game_id = game_id
     stmt = db.select(Game).where(Game.game_id == game_id)
     game = db.session.scalar(stmt)
     # if game exists
@@ -83,11 +76,8 @@ def delete_game(game_id):
 # http://localhost:8080/games/5 - PUT, PATCH
 @games_bp.route("/<int:game_id>", methods=["PUT", "PATCH"])
 @jwt_required()
+@authorise_as_admin
 def update_game(game_id):
-    # Check if user is an admin
-    is_admin = is_user_admin()
-    if not is_admin:
-        return {"error": "User is not authorised to edit a game"}, 403
     # Get the data to be updated from the body of the request
     body_data = game_schema.load(request.get_json(), partial=True)
     # get the game from the db whose fields need to be updated
