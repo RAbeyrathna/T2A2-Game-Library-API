@@ -137,14 +137,10 @@ def delete_game_platform(platform_id, game_id):
         # delete the game_platform from the session and commit
         db.session.delete(game_platform)
         db.session.commit()
-        # return msg
-
         return {
             "message": f"Platform '{platform.platform_name}' has been successfully deleted from the game '{game.game_title}'"
         }
-    # else
     else:
-        # return error msg
         return {
             "error": f"Platform '{platform.platform_name}' is not assigned to the game '{game.game_title}'"
         }, 404

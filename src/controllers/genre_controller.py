@@ -127,14 +127,10 @@ def delete_game_genre(genre_id, game_id):
         # delete the game_genre from the session and commit
         db.session.delete(game_genre)
         db.session.commit()
-        # return msg
-
         return {
             "message": f"Genre '{genre.genre_name}' has been successfully deleted from the game '{game.game_title}'"
         }
-    # else
     else:
-        # return error msg
         return {
             "error": f"Genre '{genre.genre_name}' is not assigned to the game '{game.game_title}'"
         }, 404

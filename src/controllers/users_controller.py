@@ -67,7 +67,7 @@ def delete_user(user_id):
         # return msg
         return {
             "message": f"User with ID '{user.user_id}' has been deleted successfully"
-        }
+        }, 200
     # else
     else:
         # return error msg

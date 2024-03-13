@@ -28,19 +28,37 @@ def create_app():
         return {"error": error.messages}, 400
 
     @app.errorhandler(IntegrityError)
-    def integrity_error(error):
+    def integrity_error_handler(error):
         # Original error message from the database
-        detail = str(error.orig)
+        error_detail = str(error.orig)
 
-        # Attempt to extract the key and value that caused the IntegrityError
-        match = re.search(r"Key \((.*?)\)=\((.*?)\) already exists", detail)
+        # Check for 'DETAIL:' part in the error message
+        detail_start_index = error_detail.find("DETAIL:") + len("DETAIL:")
+        detail_msg = (
+            error_detail[detail_start_index:].strip()
+            if detail_start_index > -1
+            else ""
+        )
 
-        if match:
-            key, value = match.groups()
-            message = f"A record with the {key} '{value}' already exists."
-        else:
-            # If the pattern does not match, fall back to the original detail
-            message = "A database constraint was violated."
+        # Extract meaningful message from detail
+        message = "A database constraint was violated."
+        if "is not present in table" in detail_msg:
+            # Extract the value and table name
+            value = detail_msg.split("Key ")[1].split(
+                " is not present in table"
+            )[0]
+            parts = value.split(")=(")
+            field_name = parts[0][1:]
+            field_value = parts[1][:-1]
+            table_name = detail_msg.split("is not present in table ")[1].split(
+                '"'
+            )[1]
+            message = f"{field_name.capitalize()} with the value '{field_value}' does not exist in the '{table_name.capitalize()}' table."
+
+        elif "already exists" in detail_msg:
+            # Extract the key-value pair that already exists
+            key_value_pair = detail_msg.split("already exists.")[0]
+            message = f"A record with the {key_value_pair} already exists."
 
         return {"error": message}, 409
 
@@ -73,3 +91,6 @@ def create_app():
     app.register_blueprint(games_bp)
 
     return app
+
+
+message = "(genre) with id "
