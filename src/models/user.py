@@ -21,7 +21,6 @@ class User(db.Model):
 class UserSchema(ma.Schema):
 
     username = fields.String(
-        required=True,
         validate=And(
             Length(
                 min=2,

@@ -42,24 +42,25 @@ def auth_register():
 @auth_bp.route("/login", methods=["POST"])
 def auth_login():
     # Get the data from the request body
-    body_data = request.get_json()
+    body_data = user_schema.load(request.get_json())
     # Find user with the email address
     stmt = db.select(User).filter_by(email=body_data.get("email"))
     user = db.session.scalar(stmt)
-    # If user exists and password is correct
-    if user and bcrypt.check_password_hash(
+
+    # If database does not match email to user record
+    if not user:
+        return {"error": "Invalid email. User does not exist"}, 401
+
+    if not bcrypt.check_password_hash(
         user.password, body_data.get("password")
     ):
-        # Create JWT
-        token = create_access_token(
-            identity=str(user.user_id), expires_delta=timedelta(days=1)
-        )
-        # Return the token along with the user info
-        return {"email": user.email, "token": token, "is_admin": user.is_admin}
-    # Else
-    else:
-        # Return error
-        return {"error": "Invalid email or password"}, 401
+        return {"error": "Password is incorrect"}, 401
+    # Create JWT
+    token = create_access_token(
+        identity=str(user.user_id), expires_delta=timedelta(days=1)
+    )
+    # Return the token along with the user info
+    return {"email": user.email, "token": token, "is_admin": user.is_admin}
 
 
 def is_user_admin():
