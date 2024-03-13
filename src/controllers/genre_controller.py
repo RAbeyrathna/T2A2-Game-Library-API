@@ -103,8 +103,8 @@ def update_genre(genre_id):
         return {"error": f"Genre with id {genre_id} not found"}, 404
 
 
-# http://localhost:8080/genres/4/1 - POST
-@genres_bp.route("/<int:genre_id>/<int:game_id>", methods=["POST"])
+# http://localhost:8080/genres/4/game/1 - POST
+@genres_bp.route("/<int:genre_id>/game/<int:game_id>", methods=["POST"])
 @jwt_required()
 def assign_game_genre(genre_id, game_id):
     # Check if user is an admin
@@ -122,8 +122,8 @@ def assign_game_genre(genre_id, game_id):
     return game_genre_schema.dump(game_genre), 201
 
 
-# http://localhost:8080/genres/6 - DELETE
-@genres_bp.route("/<int:genre_id>/<int:game_id>", methods=["DELETE"])
+# http://localhost:8080/genres/game/6 - DELETE
+@genres_bp.route("/<int:genre_id>/game/<int:game_id>", methods=["DELETE"])
 @jwt_required()
 def delete_game_genre(genre_id, game_id):
     # Check if user is an admin

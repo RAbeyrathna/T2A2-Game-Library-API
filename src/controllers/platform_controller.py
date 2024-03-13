@@ -110,8 +110,8 @@ def update_platform(platform_id):
         return {"error": f"Platform with id {platform_id} not found"}, 404
 
 
-# http://localhost:8080/platforms/4/1 - POST
-@platforms_bp.route("/<int:platform_id>/<int:game_id>", methods=["POST"])
+# http://localhost:8080/platforms/4/game/1 - POST
+@platforms_bp.route("/<int:platform_id>/game/<int:game_id>", methods=["POST"])
 @jwt_required()
 def assign_game_platform(platform_id, game_id):
     # Check if user is an admin
@@ -129,8 +129,10 @@ def assign_game_platform(platform_id, game_id):
     return game_platform_schema.dump(game_platform), 201
 
 
-# http://localhost:8080/platforms/6 - DELETE
-@platforms_bp.route("/<int:platform_id>/<int:game_id>", methods=["DELETE"])
+# http://localhost:8080/platforms/6/game/2 - DELETE
+@platforms_bp.route(
+    "/<int:platform_id>/game/<int:game_id>", methods=["DELETE"]
+)
 @jwt_required()
 def delete_game_platform(platform_id, game_id):
     # Check if user is an admin
