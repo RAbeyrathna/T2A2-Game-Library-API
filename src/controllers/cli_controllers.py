@@ -33,13 +33,13 @@ def seed_tables():
         User(
             username="Admin Account",
             email="admin@email.com",
-            password=bcrypt.generate_password_hash("123456").decode("utf-8"),
+            password=bcrypt.generate_password_hash("abcd123@").decode("utf-8"),
             is_admin=True,
         ),
         User(
             username="Test User 1",
             email="user1@email.com",
-            password=bcrypt.generate_password_hash("123456").decode("utf-8"),
+            password=bcrypt.generate_password_hash("abcd123@").decode("utf-8"),
         ),
     ]
 
