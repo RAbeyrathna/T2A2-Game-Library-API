@@ -1,5 +1,10 @@
 import os
+import re
+
 from flask import Flask
+from marshmallow.exceptions import ValidationError
+from sqlalchemy.exc import IntegrityError
+
 from init import db, ma, bcrypt, jwt
 
 
@@ -17,6 +22,27 @@ def create_app():
     ma.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
+
+    @app.errorhandler(ValidationError)
+    def validation_error(error):
+        return {"error": error.messages}, 400
+
+    @app.errorhandler(IntegrityError)
+    def integrity_error(error):
+        # Original error message from the database
+        detail = str(error.orig)
+
+        # Attempt to extract the key and value that caused the IntegrityError
+        match = re.search(r"Key \((.*?)\)=\((.*?)\) already exists", detail)
+
+        if match:
+            key, value = match.groups()
+            message = f"A record with the {key} '{value}' already exists."
+        else:
+            # If the pattern does not match, fall back to the original detail
+            message = "A database constraint was violated."
+
+        return {"error": message}, 409
 
     from controllers.cli_controllers import db_commands
 

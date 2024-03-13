@@ -2,6 +2,17 @@ from init import db, ma
 from marshmallow import fields
 from sqlalchemy import UniqueConstraint
 
+from marshmallow.validate import OneOf, Range
+
+VALID_STATUSES = (
+    "Plan to Play",
+    "Playing",
+    "On-hold",
+    "Dropped",
+    "Reviewing",
+    "Completed",
+)
+
 
 class Library_item(db.Model):
     __tablename__ = "library_items"
@@ -35,13 +46,31 @@ class Library_item(db.Model):
 
 class Library_Item_Schema(ma.Schema):
 
+    user_library_id = fields.Integer(required=True)
+    game_id = fields.Integer(required=True)
+    status = fields.String(validate=OneOf(VALID_STATUSES))
+    score = fields.Integer(
+        validate=Range(
+            min=0,
+            max=100,
+            error="Score must be between 0 - 100",
+        ),
+    )
+
     user_library = fields.Nested(
         "User_Library_Schema", exclude=["library_items"]
     )
-    game = fields.Nested("GameSchema", only=["game_id", "game_title"])
+    game = fields.Nested("GameSchema", only=["game_title"])
 
     class Meta:
-        fields = ("user_library", "library_item_id", "game", "status", "score")
+        fields = (
+            "user_library",
+            "library_item_id",
+            "game_id",
+            "game",
+            "status",
+            "score",
+        )
         ordered = True
 
 

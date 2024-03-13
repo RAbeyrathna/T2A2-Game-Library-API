@@ -1,9 +1,7 @@
 from datetime import timedelta
 
 from flask import Blueprint, request
-from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token, get_jwt_identity
-from psycopg2 import errorcodes
 
 from init import db, bcrypt
 from models.user import User, user_schema
@@ -14,40 +12,29 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 @auth_bp.route("/register", methods=["POST"])
 def auth_register():
-    try:
-        # Get the data from the body of the request
-        body_data = request.get_json()
-        # Create user instance
-        user = User(
-            username=body_data.get("username"),
-            email=body_data.get("email"),
-        )
-        # Get password from the request body
-        password = body_data.get("password")
-        # Check if password exists, if it does, hash it
-        if password:
-            user.password = bcrypt.generate_password_hash(password).decode(
-                "utf-8"
-            )
+    # Get the data from the body of the request
+    body_data = user_schema.load(request.get_json())
+    # Create user instance
+    user = User(
+        username=body_data.get("username"),
+        email=body_data.get("email"),
+    )
+    # Get password from the request body
+    password = body_data.get("password")
+    # Check if password exists, if it does, hash it
+    if password:
+        user.password = bcrypt.generate_password_hash(password).decode("utf-8")
 
-        # Create user and user library, then commit to session
-        db.session.add(user)
+    # Create user and user library, then commit to session
+    db.session.add(user)
 
-        user_library = User_library(user=user)
-        db.session.add(user_library)
+    user_library = User_library(user=user)
+    db.session.add(user_library)
 
-        db.session.commit()
+    db.session.commit()
 
-        # Respond back to client
-        return user_schema.dump(user), 201
-
-    except IntegrityError as err:
-        if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
-            return {"error": "Email address is already in use"}, 409
-        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
-            return {
-                "error": f"The {err.orig.diag.column_name} is required"
-            }, 400
+    # Respond back to client
+    return user_schema.dump(user), 201
 
 
 @auth_bp.route("/login", methods=["POST"])

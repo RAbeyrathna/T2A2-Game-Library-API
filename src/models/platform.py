@@ -1,5 +1,15 @@
 from init import db, ma
 from marshmallow import fields
+from marshmallow.validate import Length, OneOf, And
+
+VALID_PLATFORM_TYPES = (
+    "PC",
+    "Console",
+    "Handheld",
+    "Hybrid",
+    "Home Console",
+    "Cloud Gaming",
+)
 
 
 class Platform(db.Model):
@@ -15,6 +25,18 @@ class Platform(db.Model):
 
 
 class PlatformSchema(ma.Schema):
+    platform_id = fields.Integer()
+    platform_name = fields.String(
+        required=True,
+        validate=Length(
+            min=2,
+            error="Platform name must have a length of at least 2 characters",
+        ),
+    )
+
+    platform_type = fields.String(
+        required=True, validate=OneOf(VALID_PLATFORM_TYPES)
+    )
 
     game_platforms = fields.List(
         fields.Nested("Game_Platform_Schema", exclude=["platform"])

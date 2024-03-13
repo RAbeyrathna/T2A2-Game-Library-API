@@ -40,7 +40,7 @@ def create_genre():
     is_admin = is_user_admin()
     if not is_admin:
         return {"error": "User is not authorised to create a genre"}, 403
-    body_data = request.get_json()
+    body_data = genre_schema.load(request.get_json())
     # Create a new genre model instance
     genre = Genre(genre_name=body_data.get("genre_name"))
     # Add that to the session and commit
@@ -85,7 +85,7 @@ def update_genre(genre_id):
     if not is_admin:
         return {"error": "User is not authorised to edit a genre"}, 403
     # Get the data to be updated from the body of the request
-    body_data = request.get_json()
+    body_data = genre_schema.load(request.get_json(), partial=True)
     # get the genre from the db whose fields need to be updated
     stmt = db.select(Genre).filter_by(genre_id=genre_id)
     genre = db.session.scalar(stmt)

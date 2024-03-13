@@ -1,5 +1,7 @@
 from init import db, ma
-from marshmallow import fields
+from marshmallow import fields, validates, ValidationError
+
+from marshmallow.validate import Length, And, Regexp
 
 
 class User(db.Model):
@@ -18,6 +20,34 @@ class User(db.Model):
 
 class UserSchema(ma.Schema):
 
+    username = fields.String(
+        required=True,
+        validate=And(
+            Length(
+                min=2,
+                error="Username must have a length of at least 2 characters",
+            ),
+            Regexp(
+                "^[a-zA-Z0-9\s\-_.'()! ]+$",
+                error="Username cannot contain special characters such as @, &, #, $, %, *, /, question marks, colons, semicolons, and brackets",
+            ),
+        ),
+    )
+    email = fields.Email(required=True)
+    password = fields.String(
+        required=True,
+        validate=And(
+            Length(
+                min=6, error="Password must be at least 6 characters long."
+            ),
+            Regexp(
+                "^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$",
+                error="Password must include at least one letter, one number, and one special character.",
+            ),
+        ),
+        load_only=True,
+    )
+
     user_library = fields.Nested("User_Library_Schema", exclude=["user"])
 
     class Meta:
@@ -31,5 +61,5 @@ class UserSchema(ma.Schema):
         )
 
 
-user_schema = UserSchema(exclude=["password"])
-user_schemas = UserSchema(many=True, exclude=["password"])
+user_schema = UserSchema()
+user_schemas = UserSchema(many=True)

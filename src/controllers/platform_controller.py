@@ -39,7 +39,7 @@ def create_platform():
     is_admin = is_user_admin()
     if not is_admin:
         return {"error": "User is not authorised to create a platform"}, 403
-    body_data = request.get_json()
+    body_data = platform_schema.load(request.get_json())
     # Create a new platform model instance
     platform = Platform(
         platform_name=body_data.get("platform_name"),
@@ -87,7 +87,7 @@ def update_platform(platform_id):
     if not is_admin:
         return {"error": "User is not authorised to edit a platform"}, 403
     # Get the data to be updated from the body of the request
-    body_data = request.get_json()
+    body_data = platform_schema.load(request.get_json(), partial=True)
     # get the platform from the db whose fields need to be updated
     stmt = db.select(Platform).filter_by(platform_id=platform_id)
     platform = db.session.scalar(stmt)

@@ -49,7 +49,7 @@ def create_library_entry(library_id):
     is_admin = is_user_admin()
     if not is_library_owner and not is_admin:
         return {"error": "User is not the owner of this library"}, 403
-    body_data = request.get_json()
+    body_data = library_item_schema.load(request.get_json())
     # Create a new library_item model instance
     library_entry = Library_item(
         user_library_id=library_id,
@@ -125,9 +125,9 @@ def delete_library_item(library_item_id):
 
 @libraries_bp.route("/entry/<int:library_item_id>", methods=["PUT", "PATCH"])
 @jwt_required()
-def patch_library_item(library_item_id):
+def update_library_item(library_item_id):
     # Get the JSON data from the request
-    body_data = request.get_json()
+    body_data = library_item_schema.load(request.get_json(), partial=True)
 
     # Query the library item to be patched
     stmt = db.select(Library_item).where(

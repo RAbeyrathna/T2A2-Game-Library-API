@@ -38,7 +38,7 @@ def create_game():
     is_admin = is_user_admin()
     if not is_admin:
         return {"error": "User is not authorised to create a game"}, 403
-    body_data = request.get_json()
+    body_data = game_schema.load(request.get_json())
     # Create a new game model instance
     game = Game(
         game_title=body_data.get("game_title"),
@@ -89,7 +89,7 @@ def update_game(game_id):
     if not is_admin:
         return {"error": "User is not authorised to edit a game"}, 403
     # Get the data to be updated from the body of the request
-    body_data = request.get_json()
+    body_data = game_schema.load(request.get_json(), partial=True)
     # get the game from the db whose fields need to be updated
     stmt = db.select(Game).filter_by(game_id=game_id)
     game = db.session.scalar(stmt)
