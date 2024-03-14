@@ -10,9 +10,15 @@ from models.genre import Genre
 from models.user_library import User_library
 from models.game_genre import Game_genre
 from models.game_platform import Game_platform
-from models.library_item import Library_item
 
 db_commands = Blueprint("db", __name__)
+
+
+@db_commands.cli.command("init")
+def initalise_database():
+    db.drop_all()
+    db.create_all()
+    print("Flask application has been initialised")
 
 
 @db_commands.cli.command("create")
@@ -188,32 +194,32 @@ def seed_tables():
     db.session.add_all(platforms)
 
     game_genres = [
-        # Pokemon Diamond
+        # Pokemon Diamond - Genres
         Game_genre(game=games[0], genre=genres[1]),  # Adventure
         Game_genre(game=games[0], genre=genres[2]),  # Role-Playing
-        # Balatro
+        # Balatro - Genres
         Game_genre(game=games[1], genre=genres[38]),  # Deck Building
         Game_genre(game=games[1], genre=genres[4]),  # Strategy
-        Game_genre(game=games[1], genre=genres[34]),  # Indie
+        Game_genre(game=games[1], genre=genres[34]),  # Tactical
         Game_genre(game=games[1], genre=genres[19]),  # Roguelike
-        # Slay The Spire
+        # Slay The Spire - Genres
         Game_genre(game=games[2], genre=genres[38]),  # Deck Building
         Game_genre(game=games[2], genre=genres[19]),  # Roguelike
         Game_genre(game=games[2], genre=genres[4]),  # Strategy
-        # God of War
+        # God of War - Genres
         Game_genre(game=games[3], genre=genres[0]),  # Action
-        Game_genre(game=games[3], genre=genres[27]),  # Fantasy
+        Game_genre(game=games[3], genre=genres[27]),  # Hack and Slash
         Game_genre(game=games[3], genre=genres[33]),  # Mythology
-        # Psychonauts
+        # Psychonauts genres
         Game_genre(game=games[4], genre=genres[12]),  # Platformer
         Game_genre(game=games[4], genre=genres[30]),  # Narrative
-        # Pyre
+        # Pyre genres
         Game_genre(game=games[5], genre=genres[2]),  # Role-Playing
         Game_genre(game=games[5], genre=genres[4]),  # Strategy
-        # The Legend of Zelda: Breath of the Wild
+        # The Legend of Zelda: Breath of the Wild - Genres
         Game_genre(game=games[6], genre=genres[1]),  # Adventure
         Game_genre(game=games[6], genre=genres[39]),  # Open World
-        # Cyberpunk 2077
+        # Cyberpunk 2077 - Genres
         Game_genre(game=games[7], genre=genres[0]),  # Action
         Game_genre(game=games[7], genre=genres[30]),  # Narrative
         Game_genre(game=games[7], genre=genres[37]),  # Action RPG
@@ -222,36 +228,32 @@ def seed_tables():
     db.session.add_all(game_genres)
 
     game_platforms = [
-        # Pokemon Diamond
+        # Pokemon Diamond - Platforms
         Game_platform(game=games[0], platform=platforms[4]),  # Nintendo DS
-        # Balatro
+        # Balatro - Platforms
         Game_platform(game=games[1], platform=platforms[0]),  # Windows
         Game_platform(game=games[1], platform=platforms[1]),  # Linux
         Game_platform(game=games[1], platform=platforms[2]),  # Mac OS
-        # Slay The Spire
+        # Slay The Spire - Platforms
         Game_platform(game=games[2], platform=platforms[0]),  # Windows
         Game_platform(game=games[2], platform=platforms[1]),  # Linux
         Game_platform(game=games[2], platform=platforms[4]),  # Nintendo DS
-        # God of War
+        # God of War - Platforms
         Game_platform(game=games[3], platform=platforms[0]),  # Windows
         Game_platform(game=games[3], platform=platforms[7]),  # PlayStation 3
         Game_platform(game=games[3], platform=platforms[8]),  # PlayStation 4
         Game_platform(game=games[3], platform=platforms[9]),  # PlayStation 5
-        # Psychonauts
+        # Psychonauts - Platforms
         Game_platform(game=games[4], platform=platforms[14]),  # Nintendo 64
         Game_platform(game=games[4], platform=platforms[15]),  # Nintendo Wii
         Game_platform(game=games[4], platform=platforms[16]),  # Nintendo Wii U
-        # Pyre
+        # Pyre - Platforms
         Game_platform(game=games[5], platform=platforms[0]),  # Windows
         Game_platform(game=games[5], platform=platforms[1]),  # Linux
-        Game_platform(
-            game=games[5], platform=platforms[17]
-        ),  # Nintendo Switch
-        # The Legend of Zelda: Breath of the Wild
-        Game_platform(
-            game=games[6], platform=platforms[17]
-        ),  # Nintendo Switch
-        # Cyberpunk 2077
+        # The Legend of Zelda: Breath of the Wild - Platforms
+        Game_platform(game=games[6], platform=platforms[16]),  # Nintendo Wii U
+        Game_platform(game=games[6], platform=platforms[17]),  # Switch
+        # Cyberpunk 2077 - Platforms
         Game_platform(game=games[7], platform=platforms[0]),  # Windows
         Game_platform(game=games[7], platform=platforms[11]),  # Xbox One
         Game_platform(game=games[7], platform=platforms[12]),  # Xbox Series X
@@ -263,16 +265,3 @@ def seed_tables():
     db.session.commit()
 
     print("Tables have been seeded")
-
-
-@db_commands.cli.command("drop")
-def drop_tables():
-    db.drop_all()
-    print("All tables have been dropped")
-
-
-@db_commands.cli.command("init")
-def initalise_database():
-    db.drop_all()
-    db.create_all()
-    print("Flask application has been initialised")
