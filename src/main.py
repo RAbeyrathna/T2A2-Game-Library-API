@@ -24,16 +24,20 @@ def create_app():
     jwt.init_app(app)
 
     @app.errorhandler(400)
-    def attribute_error(err):
-        return {"error": str(err)}, 400
+    def attribute_error(error):
+        return {"error": str(error)}, 400
 
     @app.errorhandler(400)
-    def bad_request(err):
-        return {"error": str(err)}, 400
+    def bad_request(error):
+        return {"error": str(error)}, 400
 
     @app.errorhandler(404)
-    def not_found(err):
-        return {"error": str(err)}, 404
+    def not_found(error):
+        return {"error": str(error)}, 404
+
+    @app.errorhandler(500)
+    def internal_server(error):
+        return {"error": str(error)}, 500
 
     @app.errorhandler(ValidationError)
     def validation_error(error):
