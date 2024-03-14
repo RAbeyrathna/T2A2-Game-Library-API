@@ -1,5 +1,5 @@
 from init import db, ma
-from marshmallow import fields, validates, ValidationError
+from marshmallow import fields
 
 from marshmallow.validate import Length, And, Regexp
 
@@ -47,7 +47,9 @@ class UserSchema(ma.Schema):
         load_only=True,
     )
 
-    user_library = fields.Nested("User_Library_Schema", exclude=["user"])
+    user_library = fields.List(
+        fields.Nested("User_Library_Schema", only=["user_library_id"])
+    )
 
     class Meta:
         fields = (
