@@ -23,6 +23,14 @@ def create_app():
     bcrypt.init_app(app)
     jwt.init_app(app)
 
+    @app.errorhandler(400)
+    def bad_request(err):
+        return {"error": str(err)}, 400
+
+    @app.errorhandler(404)
+    def not_found(err):
+        return {"error": str(err)}, 404
+
     @app.errorhandler(ValidationError)
     def validation_error(error):
         return {"error": error.messages}, 400
@@ -44,10 +52,10 @@ def create_app():
         message = "A database constraint was violated."
         if "is not present in table" in detail_msg:
             # Extract the value and table name
-            value = detail_msg.split("Key ")[1].split(
+            extracted_values = detail_msg.split("Key ")[1].split(
                 " is not present in table"
             )[0]
-            parts = value.split(")=(")
+            parts = extracted_values.split(")=(")
             field_name = parts[0][1:]
             field_value = parts[1][:-1]
             table_name = detail_msg.split("is not present in table ")[1].split(
