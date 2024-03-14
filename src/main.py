@@ -24,6 +24,10 @@ def create_app():
     jwt.init_app(app)
 
     @app.errorhandler(400)
+    def attribute_error(err):
+        return {"error": str(err)}, 400
+
+    @app.errorhandler(400)
     def bad_request(err):
         return {"error": str(err)}, 400
 

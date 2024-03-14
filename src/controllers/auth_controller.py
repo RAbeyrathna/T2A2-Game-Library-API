@@ -76,12 +76,18 @@ def auth_login():
 def is_user_admin():
 
     # Get user_id from the JWT token
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
 
     # Find the user record with the user_id
     # SELECT * FROM users where user_id = jwt_user_id
     stmt = db.select(User).filter_by(user_id=user_id)
     user = db.session.scalar(stmt)
+
+    # For edge case where old JWT token is used for a deleted account
+    if user is None:
+        return {
+            "error": "The logged in user has been deleted. Please login again."
+        }, 403
 
     # Return True if user is admin, otherwise False
     return user.is_admin
@@ -93,11 +99,17 @@ def authorise_as_admin(fn):
     def wrapper(*args, **kwargs):
 
         # Get user_id from the JWT token
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
 
         # SELECT * FROM users where user_id = jwt_user_id
         stmt = db.select(User).filter_by(user_id=user_id)
         user = db.session.scalar(stmt)
+
+        # For edge case where old JWT token is used for a deleted account
+        if user is None:
+            return {
+                "error": "The logged in user has been deleted. Please login again."
+            }, 403
 
         # Run the decorated function if user is admin
         if user.is_admin:
