@@ -118,7 +118,7 @@ def delete_user(user_id):
 # # Assume user_id = 5
 @user_bp.route("/<int:user_id>", methods=["PUT", "PATCH"])
 @jwt_required()
-@account_owner
+@account_owner  # Make sure user owns the account or is an admin
 def update_user(user_id):
 
     # Get the data to be updated from the body of the request
@@ -150,5 +150,4 @@ def update_user(user_id):
         return user_schema.dump(user)
     # Else, return error message that user_id was not found
     else:
-
         return {"error": f"User with ID {user_id} not found"}, 404

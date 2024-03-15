@@ -1,5 +1,4 @@
 import os
-import re
 
 from flask import Flask
 from marshmallow.exceptions import ValidationError
@@ -17,12 +16,13 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URI")
     app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
 
-    # Connect libraries with flask app
+    # Connect libraries in init.py with Flask app
     db.init_app(app)
     ma.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
 
+    # Error handling for entire application
     @app.errorhandler(400)
     def attribute_error(error):
         return {"error": str(error)}, 400
@@ -61,8 +61,10 @@ def create_app():
         if "is not present in table" in detail_msg:
             # Extract the value and table name
             extracted_values = detail_msg.split("Key ")[1].split(
-                " is not present in table"
+                " is not preset in table"
             )[0]
+
+            # Get individual variable names to use in final error message
             parts = extracted_values.split(")=(")
             field_name = parts[0][1:]
             field_value = parts[1][:-1]
@@ -71,13 +73,15 @@ def create_app():
             )[1]
             message = f"{field_name.capitalize()} with the value '{field_value}' does not exist in the '{table_name.capitalize()}' table."
 
+        # Extract the key-value pair that already exists
         elif "already exists" in detail_msg:
-            # Extract the key-value pair that already exists
+
             key_value_pair = detail_msg.split("already exists.")[0]
             message = f"A record with the {key_value_pair} already exists."
 
         return {"error": message}, 409
 
+    # Blueprint controllers to register
     from controllers.cli_controllers import db_commands
 
     app.register_blueprint(db_commands)
@@ -107,6 +111,3 @@ def create_app():
     app.register_blueprint(games_bp)
 
     return app
-
-
-message = "(genre) with id "
