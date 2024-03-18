@@ -786,6 +786,220 @@ dotenv is a library used to load environment variables from a `.env` file. This 
 
 > Explain the models used in the project and the relationships between them.
 
+The models used in this application are seperated into seperate files.
+
+The user model defines the user table in the relational database and is used to represent the user accounts that are used in the application.
+
+It is set up as follows:
+
+`User Model`
+
+```python
+class User(db.Model):
+    __tablename__ = "users"
+
+    user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String)
+    email = db.Column(db.String, nullable=False, unique=True)
+    password = db.Column(db.String, nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+
+    user_library = db.relationship(
+        "User_library", back_populates="user", cascade="all, delete"
+    )
+```
+
+ A user relates directly to the `user_library` model with a one-to-one relationship, as a user_library is created at the time a user account is created. These are directly linked with the *user_id* acting as a foreign key in the `user_library` model. The `user_library` model also acts as a junction between the `user` and `library_item` models as the two have a many-to-many relationship.
+
+`User_library Model`
+
+ ```python
+class User_library(db.Model):
+    __tablename__ = "user_library"
+
+    user_library_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("users.user_id"), nullable=False
+    )
+
+    user = db.relationship("User", back_populates="user_library")
+
+    library_items = db.relationship(
+        "Library_item", back_populates="user_library", cascade="all, delete"
+    )
+ ```
+
+The User_library stores the *user_id* to represent who owns the library, and acts as a junction table to relate the user model to the `library_item` model.
+
+ When a user account is deleted, the according user_library is also deleted as it cannot exist without the corresponding user account. This is accomplished using `cascade="all, delete"`.
+
+ As can be seen in the `user_library` model, it also has a one-to-many relationship with the `library_item` model as the libary_items have a foreign key which is associated to the `user_library` primary key.
+
+`Library Item Model`
+
+ ```python
+ class Library_item(db.Model):
+    __tablename__ = "library_items"
+
+    library_item_id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String)
+    score = db.Column(db.Integer)
+
+    user_library_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user_library.user_library_id"),
+        nullable=False,
+    )
+
+    game_id = db.Column(
+        db.Integer, db.ForeignKey("games.game_id"), nullable=False
+    )
+
+    user_library = db.relationship(
+        "User_library", back_populates="library_items"
+    )
+
+    game = db.relationship("Game", back_populates="library_items")
+
+    __table_args__ = (
+        UniqueConstraint(
+            "game_id", "user_library_id", name="unique_game_entry"
+        ),
+    )
+ ```
+ 
+ The `library_item` model acts as the individual entries that a user can add to their libraries to track games that they want to catalog. As such, it holds the *library_id* of the corresponding user and the *game_id* of the game to track. Both the library_id and game_id are foreign keys in this model.
+
+ If the user_library is deleted (which is when a user is deleted), all of the associated library_items are then also deleted using `cascade="all, delete"`.
+
+The library item also has a one-to-many relationship with the `games` model, as a library_item must have the corresponding *game_id* for the library entry.
+
+`Game Model`
+
+```python
+class Game(db.Model):
+    __tablename__ = "games"
+
+    game_id = db.Column(db.Integer, primary_key=True)
+    game_title = db.Column(db.String, nullable=False)
+    publisher = db.Column(db.String)
+    description = db.Column(db.String)
+    release_date = db.Column(db.Date)
+    metacritic_score = db.Column(db.Integer)
+
+    game_genres = db.relationship(
+        "Game_genre", back_populates="game", cascade="all, delete"
+    )
+
+    game_platforms = db.relationship(
+        "Game_platform", back_populates="game", cascade="all, delete"
+    )
+
+    library_items = db.relationship(
+        "Library_item", back_populates="game", cascade="all, delete"
+    )
+```
+
+The game model itself does not hold any foreign keys and acts to store the main data of the games in the application. It stores the main information such as a description of the game, the publisher of the game and the release date of it. 
+
+It relates to two seperate junction tables, which are represented by the `game_genre` and `game_platform` models. This is because the game model has a one-to-many relation with both the `genre` and `platform` models, as a game can have multiple genres and genres can belong to multiple games, and vice versa for platforms.
+
+`Genre Model`
+
+```python
+class Genre(db.Model):
+    __tablename__ = "genres"
+
+    genre_id = db.Column(db.Integer, primary_key=True)
+    genre_name = db.Column(db.String, nullable=False, unique=True)
+
+    game_genres = db.relationship(
+        "Game_genre", back_populates="genre", cascade="all, delete"
+    )
+```
+
+The genre model simply holds the *genre_name* and corresponding id of said genre. 
+
+It relates directly to the `game_genre` model, and has the same `cascade="all, delete"` as if a genre is deleted, then all associated game entries should also be deleted.
+
+`Game_genre Model`
+
+```python
+class Game_genre(db.Model):
+    __tablename__ = "game_genres"
+
+    game_genres_id = db.Column(db.Integer, primary_key=True)
+
+    game_id = db.Column(
+        db.Integer, db.ForeignKey("games.game_id"), nullable=False
+    )
+
+    genre_id = db.Column(
+        db.Integer, db.ForeignKey("genres.genre_id"), nullable=False
+    )
+
+    game = db.relationship("Game", back_populates="game_genres")
+    genre = db.relationship("Genre", back_populates="game_genres")
+
+    __table_args__ = (
+        UniqueConstraint("game_id", "genre_id", name="unique_game_genre"),
+    )
+```
+
+The `game_genre` model takes the primary key from the `genre` model as a foreign key and also takes the primary key of the `game` model.
+
+This model can then represent the many to many relationship between the `genre` and `game` models.
+
+`Platform Model`
+
+```python
+class Platform(db.Model):
+    __tablename__ = "platforms"
+
+    platform_id = db.Column(db.Integer, primary_key=True)
+    platform_name = db.Column(db.String, nullable=False, unique=True)
+    platform_type = db.Column(db.String, nullable=False)
+
+    game_platforms = db.relationship(
+        "Game_platform", back_populates="platform", cascade="all, delete"
+    )
+```
+
+The `platform` and `game_platform` models are nearly identical to the `genre` and `game_genre` models as they have the same type of relationship.
+
+The `platform` model has different fields to represent the data it holds such as a *platform_type* to represent different types of platforms (Handhelds, console, computers).
+
+If a platform entry is deleted, then all associated game_platforms are also deleted.
+
+`Game_platform Model`
+
+```python
+class Game_platform(db.Model):
+    __tablename__ = "game_platforms"
+
+    game_platforms_id = db.Column(db.Integer, primary_key=True)
+
+    game_id = db.Column(
+        db.Integer, db.ForeignKey("games.game_id"), nullable=False
+    )
+
+    platform_id = db.Column(
+        db.Integer, db.ForeignKey("platforms.platform_id"), nullable=False
+    )
+
+    game = db.relationship("Game", back_populates="game_platforms")
+    platform = db.relationship("Platform", back_populates="game_platforms")
+
+    __table_args__ = (
+        UniqueConstraint(
+            "game_id", "platform_id", name="unique_game_platform"
+        ),
+    )
+```
+
+Finally we have the `game_platform` model which stores the foreign keys of both the *game_id* and the associated *platform_id*. This is set up identically to the `game_genre` model.
+
+
 ## R9: Database Relations
 
 > Discuss how database relations are implemented within the application.
