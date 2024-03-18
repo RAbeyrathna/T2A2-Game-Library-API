@@ -28,9 +28,10 @@ The steps below assume you are running on a MacOS or Linux based operating syste
 2. Open the `'src'` folder in your terminal of choice
 3. Run `python3 -m venv venv`
 4. Run `source venv/bin/activate`
-5. Run `flask db init` to intialise the database and create the tables
-6. Run `flask db seed` to get the default seed data for the database
-7. Run `flask run` to start the flask server on `http://localhost:8080`
+5. Run `pip3 install -r requirements.txt` to install the required modules
+6. Run `flask db init` to intialise the database and create the tables
+7. Run `flask db seed` to get the default seed data for the database
+8. Run `flask run` to start the flask server on `http://localhost:8080`
 
 ## R1: Problem Identification
 
@@ -748,6 +749,38 @@ Example response:
 ## R7: Third-Party Services Integration
 
 > Describe any third-party services the application relies on and their purposes.
+
+### PostgreSQL
+
+PostgreSQL is an open-source relational database system. It is used to store and manage data, and offers many features such as views, foreign key referential integrity, and sophisticated locking. This application utilises it as the primary relational database to manage all the information of the system.
+
+### Flask
+
+Flask is a lightweight WSGI web application framework used to build this application. It is simple and easy to implement, and is very powerful to run web applications.
+
+### SQLAlchemy
+
+SQLAlchemy is Python based ORM that allows developers to work with databases without needing to directly interact with the database system. It is designed for efficient and high-performing database access with high level abstraction to make it simple and easy for developers to utilise.
+
+### Psycopg2
+
+Psycopg2 is a PostgreSQL adapter for Python and is used as a bridge between the Python language and the PostgreSQL database. Through this, we are able to use Python code to execute SQL commands and directly connect to the PSQL database in this application.
+
+### Bcrypt
+
+Bcrypt is a password-hashing function that was used to hash any passwords that users register with in the application. When the user registers, Bcrypt creates and stores the hash rather than directly saving a readable string of the password. It is also used to decode and compare the hash when logging in.
+
+### Marshmallow
+
+Marshmallow is an ORM framework library that assists in converting the data type of the SQL database into python readable data types. It's's typically used for object serialization and deserialization, and it's especially useful for turning database models into JSON objects which can be used in RESTful APIs.
+
+### JWT-Extended
+
+JWT-Extended is an extension used for Flask that allows the use of JSON Web Tokens (JWT). This applciation utilises it to create tokens for users to login with and provide authentication and verification of user privileges throughout the application.
+
+### dotenv
+
+dotenv is a library used to load environment variables from a `.env` file. This was used to keep sensitive vairables and data in a seperate file, which configure and set up the application such as secret keys or database logins.
 
 ## R8: Application Models and Relationships
 
