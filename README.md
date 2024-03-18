@@ -757,13 +757,33 @@ Example response:
 
 > Discuss how database relations are implemented within the application.
 
+The Users table is central to the application, with each user identified by a unique user_id (PK). Users are related to user_library through a one-to-one relationship, as each user can have a single library and a library can only be associated with a single user.
+
+The user_library itself is then related to the library_item table through a zero-to-many relationship, as the library itself can have several library_items, which represent entries that a user would have in their game library. The user_library's primary key (user_library_id) is passed to the library_item table as a foreign key.
+
+The library_item and games table also have a zero-to-many relationship as a game can be apart of zero or many library entries, however the library entry itself can only associate to a single game at a time. The library_item table also takes the primary key of game_id from the games table as a foreign key.
+
+As such, each library entry belongs to a single library and is associated to only one user and a particular game.
+
+An example entry would look like the following:
+
+| library_item_id | game_id | user_library_id | score | status |
+|----------|----------|----------|----------|----------|
+| 1 | 2 | 1 | 70 | Playing |
+
+In this entry, the user which owns library_id 1, is currently playing the game with game_id 2. The entry itself has a unique identifier of library_item_id 1.
+
+The Games is the core of the application, and contains details such as game_title, publisher, description, and metacritic_score. This table has a many-to-many relationship with the Genres table through the associative junction table Game_genres, which connects games to their respective genres using game_id and genre_id as foreign keys. This relationship allows a game to belong to multiple genres and a genre to include multiple games.
+
+Similarly, there's a many-to-many relationship between the Games table and the Platform table via game_platforms. This also represents that a game can be available on multiple platforms, and a platform can support multiple games.
+
 ## R10: Task Allocation and Tracking
 
 > Outline how tasks are allocated and tracked during the project's development.
 
-During the development of this project, I used Trello to track and manage the tasks I needed to complete. 
+During the development of this project, I used Trello to track and manage the tasks I needed to complete.
 
-At the beginning of the project, I made a list of goals and deliverables I wanted to complete, and broke these down into subtasks and into cards where suitable. 
+At the beginning of the project, I made a list of goals and deliverables I wanted to complete, and broke these down into subtasks and into cards where suitable.
 
 Each card then was given sub-tasks to break it down and work on individually.
 
