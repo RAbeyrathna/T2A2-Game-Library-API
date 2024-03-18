@@ -125,7 +125,7 @@ To streamline your documentation and avoid repeating the sub-headings "Parameter
 
 #### `POST - /auth/register` (User Registration)
 
-This route allows users to register an account with the application which can then be used in the `/auth/login` route.
+- This route allows users to register an account with the application which can then be used in the `/auth/login` route.
 
 **Parameters/Response Body**:
 
@@ -144,7 +144,7 @@ Example request body:
 
 **Response**:
 
-Returns the created user account details including user_id, username, email, is_admin status, and a newly created user_library_id.
+- Returns the created user account details including user_id, username, email, is_admin status, and a newly created user_library_id.
 
 Example response:
 
@@ -164,7 +164,7 @@ Example response:
 
 #### `POST - /auth/login` (User Login)
 
-This route allows users to login with an account that has been previously registered.
+- This route allows users to login with an account that has been previously registered.
 
 **Parameters/Response Body**:
 
@@ -182,7 +182,7 @@ Example request body:
 
 **Response**:
 
-Returns the JWT token of the logged in user, along with email and is_admin status.
+- Returns the JWT token of the logged in user, along with email and is_admin status.
 
 Example response:
 
@@ -200,15 +200,16 @@ Example response:
 
 #### `GET - /users/{user_id}` (Get One User record)
 
-This route allows users to retrieve an individual user record from the database.
+- This route allows users to retrieve an individual user record from the database.
 
 **Parameters/Response Body**:
 
-No parameters needed in the response body. Only a `user_id` in the route.
+- No parameters needed in the response body
+- `user_id` is passed through the route.
 
 **Response**:
 
-Returns the user record with the corresponding ID.
+- Returns the user record with the corresponding ID.
 
 Example response:
 
@@ -230,15 +231,15 @@ Example response:
 
 #### `GET - /users/` (Get all User records)
 
-This route allows users to retrieve all user record from the database.
+- This route allows users to retrieve all user record from the database.
 
 **Parameters/Response Body**:
 
-No parameters needed in the response body
+- No parameters needed in the response body
 
 **Response**:
 
-Returns all user records currently registered in the database.
+- Returns all user records currently registered in the database.
 
 Example response:
 
@@ -273,8 +274,8 @@ Example response:
 
 #### `DELETE - /users/{user_id}` (Delete a User record)
 
-This route allows a user to delete an account from the database.
-It requires the user to be logged in with an **admin** account or the owner of the account being deleted.
+- This route allows a user to delete an account from the database.
+- It requires the user to be logged in with an **admin** account or the owner of the account being deleted.
 
 **Parameters/Response Body**:
 
@@ -292,10 +293,10 @@ Example response:
 
 ---
 
-#### `UPDATE - /users/{user_id}` (Update a User record)
+#### `PATCH - /users/{user_id}` (Update a User record)
 
-This route allows a user to modify an account from the database.
-It requires the user to be logged in with an **admin** account or the owner of the account being edited.
+- This route allows a user to modify an account from the database.
+- It requires the user to be logged in with an **admin** account or the owner of the account being edited.
 
 **Parameters/Response Body**:
 
@@ -313,7 +314,7 @@ Example body-
 
 **Response**:
 
-Returns the user account with the updated fields.
+- Returns the user account with the updated fields
 
 Example response:
 
@@ -337,27 +338,37 @@ Example response:
 
 #### `GET - /genres/{genre_id}` (Get One Genre record)
 
-This route allows users to retrieve an individual user record from the database.
+- This route allows users to retrieve an individual genre record from the database.
 
 **Parameters/Response Body**:
 
-No parameters needed in the response body. Only a `user_id` in the route.
+- No parameters needed in the response body
+- `genre_id` is specified in the route
 
 **Response**:
 
-Returns the user record with the corresponding ID.
+Returns the genre record with the corresponding fields
 
 Example response:
 
 ```JSON
 {
-    "user_id": 2,
-    "username": "Test User 1",
-    "email": "user1@email.com",
-    "is_admin": false,
-    "user_library": [
+    "genre_id": 2,
+    "genre_name": "Adventure",
+    "game_genres": [
         {
-            "user_library_id": 2
+            "game_genres_id": 1,
+            "game": {
+                "game_id": 1,
+                "game_title": "Pokemon Diamond"
+            }
+        },
+        {
+            "game_genres_id": 17,
+            "game": {
+                "game_id": 7,
+                "game_title": "The Legend of Zelda: Breath of the Wild"
+                }
         }
     ]
 }
@@ -371,35 +382,53 @@ This route allows users to retrieve all genre record from the database.
 
 **Parameters/Response Body**:
 
-No parameters needed in the response body
+- No parameters needed in the response body
 
 **Response**:
 
-Returns all genre records currently registered in the database.
+- Returns all genre records currently registered in the database
 
 Example response:
 
 ```JSON
 [
     {
-        "user_id": 1,
-        "username": "Admin Account",
-        "email": "admin@email.com",
-        "is_admin": true,
-        "user_library": [
+        "genre_id": 1,
+        "genre_name": "Action",
+        "game_genres": [
             {
-                "user_library_id": 1
+                "game_genres_id": 10,
+                "game": {
+                    "game_id": 4,
+                    "game_title": "God of War"
+                }
+            },
+            {
+                "game_genres_id": 19,
+                "game": {
+                    "game_id": 8,
+                    "game_title": "Cyberpunk 2077"
+                }
             }
         ]
     },
     {
-        "user_id": 2,
-        "username": "Test User 1",
-        "email": "user1@email.com",
-        "is_admin": false,
-        "user_library": [
+        "genre_id": 2,
+        "genre_name": "Adventure",
+        "game_genres": [
             {
-                "user_library_id": 2
+                "game_genres_id": 1,
+                "game": {
+                    "game_id": 1,
+                    "game_title": "Pokemon Diamond"
+                }
+            },
+            {
+                "game_genres_id": 17,
+                "game": {
+                    "game_id": 7,
+                    "game_title": "The Legend of Zelda: Breath of the Wild"
+                }
             }
         ]
     }
@@ -408,10 +437,43 @@ Example response:
 
 ---
 
+#### `PATCH - /genres/` (Create a genre record)
+
+- This route allows users to create a genre record and add it to the database.
+- This route can only be utilised by an **admin account**.
+
+**Parameters/Response Body**:
+
+- `genre_name`: String - the name of the genre being created
+
+Example response body:
+
+```JSON
+{
+    "genre_name": "Platforming"
+}
+```
+
+**Response**:
+
+- Returns the newly created genre record and corresponding fields
+
+Example response:
+
+```JSON
+{
+    "genre_id": 41,
+    "genre_name": "Platforming",
+    "game_genres": []
+}
+```
+
+---
+
 #### `DELETE - /genres/{genre_id}` (Delete a Genre record)
 
-This route allows a user to delete a genre from the database.
-It requires the user to be logged in with an **admin** account.
+- This route allows a user to delete a genre from the database.
+- This route can only be utilised by an **admin account**.
 
 **Parameters/Response Body**:
 
@@ -423,16 +485,16 @@ Example response:
 
 ```JSON
 {
-    "message": "User with ID '2' has been deleted successfully"
+    "message": "Genre 'Platforming' has been deleted successfully"
 }
 ```
 
 ---
 
-#### `UPDATE - /genres/{genre_id}` (Update a Genre record)
+#### `PATCH - /genres/{genre_id}` (Update a Genre record)
 
-This route allows a user to modify a genre record from the database.
-It requires the user to be logged in with an **admin** account.
+- This route allows a user to modify a genre record from the database.
+- This route can only be utilised by an **admin account**.
 
 **Parameters/Response Body**:
 
@@ -443,28 +505,78 @@ Example body-
 
 ```JSON
 {
-    "username": "User 1",
-    "email": "username1@email.com"
+    "genre_name": "UPDATED GENRE NAME"
 }
 ```
 
 **Response**:
 
-Returns the genre with the updated fields.
+- Returns the updated genre fields with any associated games.
 
 Example response:
 
 ```JSON
 {
-    "user_id": 2,
-    "username": "User 1",
-    "email": "username1@email.com",
-    "is_admin": false,
-    "user_library": [
-        {
-            "user_library_id": 2
-            }
+    "genre_id": 40,
+    "genre_name": "UPDATED GENRE NAME",
+    "game_genres": [
     ]
+}
+```
+
+---
+
+#### `POST - /genres/{genre_id}/game/{game_id}` (Assign game to a genre)
+
+- This route allows users to assign a specific game to a specific genre.
+- This route can only be utilised by an **admin account**.
+
+**Parameters/Response Body**:
+
+- No parameters needed in the response body
+- The game_id and genre_id are specified in the route.
+
+**Response**:
+
+- Returns the game_genre record with the associated genre and game.
+
+Example response:
+
+```JSON
+{
+    "game_genres_id": 22,
+    "genre": {
+        "genre_id": 10,
+        "genre_name": "Strategy"
+        },
+        "game": {
+            "game_id": 2,
+            "game_title": "Balatro"
+        }
+}
+```
+
+---
+
+#### `DELETE - /genres/{genre_id}/game/{game_id}` (Delete a game from a genre)
+
+- This route allows users to delete a game that has been assigned a genre.
+- This route can only be utilised by an **admin account**.
+
+**Parameters/Response Body**:
+
+- No parameters needed in the response body
+- The game_id and genre_id are specified in the route.
+
+**Response**:
+
+- Returns a response to confirm the successful deletion
+
+Example response:
+
+```JSON
+{
+    "message": "Genre 'Strategy' has been successfully deleted from the game 'Balatro'"
 }
 ```
 
@@ -472,27 +584,31 @@ Example response:
 
 #### `GET - /platforms/{platform_id}` (Get One Platform record)
 
-This route allows users to retrieve an individual platform record from the database.
+- This route allows users to retrieve an individual platform record from the database.
 
 **Parameters/Response Body**:
 
-No parameters needed in the response body. Only a `platform_id` in the route.
+- No parameters needed in the response body
+- `platform_id` is passed through the route.
 
 **Response**:
 
-Returns the platform record with the corresponding ID.
+- Returns the platform record and corresponding fields
 
 Example response:
 
 ```JSON
 {
-    "user_id": 2,
-    "username": "Test User 1",
-    "email": "user1@email.com",
-    "is_admin": false,
-    "user_library": [
+    "platform_id": 3,
+    "platform_name": "Mac OS",
+    "platform_type": "PC",
+    "game_platforms": [
         {
-            "user_library_id": 2
+            "game_platforms_id": 4,
+            "game": {
+                "game_id": 2,
+                "game_title": "Balatro"
+            }
         }
     ]
 }
@@ -502,72 +618,166 @@ Example response:
 
 #### `GET - /platforms/` (Get all Platform records)
 
-This route allows users to retrieve all platform record from the database.
+- This route allows users to retrieve all platform record from the database.
 
 **Parameters/Response Body**:
 
-No parameters needed in the response body
+- No parameters needed in the response body
 
 **Response**:
 
-Returns all platform records in the database.
+- Returns all platform records in the database
 
 Example response:
 
 ```JSON
 [
-    {
-        "user_id": 1,
-        "username": "Admin Account",
-        "email": "admin@email.com",
-        "is_admin": true,
-        "user_library": [
-            {
-                "user_library_id": 1
-            }
-        ]
-    },
-    {
-        "user_id": 2,
-        "username": "Test User 1",
-        "email": "user1@email.com",
-        "is_admin": false,
-        "user_library": [
-            {
-                "user_library_id": 2
-            }
-        ]
-    }
+  {
+    "platform_id": 1,
+    "platform_name": "Windows",
+    "platform_type": "PC",
+    "game_platforms": [
+      {
+        "game_platforms_id": 2,
+        "game": {
+          "game_id": 2,
+          "game_title": "Balatro"
+        }
+      },
+      {
+        "game_platforms_id": 5,
+        "game": {
+          "game_id": 3,
+          "game_title": "Slay The Spire"
+        }
+      },
+      {
+        "game_platforms_id": 8,
+        "game": {
+          "game_id": 4,
+          "game_title": "God of War"
+        }
+      },
+      {
+        "game_platforms_id": 15,
+        "game": {
+          "game_id": 6,
+          "game_title": "Pyre"
+        }
+      },
+      {
+        "game_platforms_id": 19,
+        "game": {
+          "game_id": 8,
+          "game_title": "Cyberpunk 2077"
+        }
+      }
+    ]
+  },
+  {
+    "platform_id": 2,
+    "platform_name": "Linux",
+    "platform_type": "PC",
+    "game_platforms": [
+      {
+        "game_platforms_id": 6,
+        "game": {
+          "game_id": 3,
+          "game_title": "Slay The Spire"
+        }
+      },
+      {
+        "game_platforms_id": 16,
+        "game": {
+          "game_id": 6,
+          "game_title": "Pyre"
+        }
+      },
+      {
+        "game_platforms_id": 24,
+        "game": {
+          "game_id": 7,
+          "game_title": "The Legend of Zelda: Breath of the Wild"
+        }
+      }
+    ]
+  }
 ]
+
+```
+
+---
+
+#### `POST - /platforms/` (Create a platform record)
+
+- This route allows users to create a platform record and add it to the database.
+- This route can only be utilised by an **admin account**
+
+**Parameters/Response Body**:
+
+- `platform_name`: String - the name of the platform being created
+- `platform_type`: String - the type of platform being created
+  - The platform type can only be one of the predetermined types
+    - PC
+    - Console
+    - Handheld
+    - Hybrid
+    - Home Console
+    - Cloud Gaming
+
+Example response body:
+
+```JSON
+{
+    "platform_name": "DS",
+    "platform_type": "Handheld"
+}
+```
+
+**Response**:
+
+- Returns the newly created platform record and its associated fields.
+
+Example response:
+
+```JSON
+{
+    "platform_id": 19,
+    "platform_name": "DS",
+    "platform_type": "Handheld",
+    "game_platforms": []
+}
 ```
 
 ---
 
 #### `DELETE - /platforms/{platform_id}` (Delete a Platform record)
 
-This route allows a user to delete a platform from the database.
-It requires the user to be logged in with an **admin** account.
+- This route allows a user to delete a platform from the database
+- This route can only be utilised by an **admin account**.
 
 **Parameters/Response Body**:
 
-- `platform_id` of the account to be deleted is passed through the route
+- `platform_id` of the platform to be deleted is passed through the route
 
 **Response**:
+
+- Returns a confirmation message that the specified platform has been deleted
 
 Example response:
 
 ```JSON
 {
-    "message": "User with ID '2' has been deleted successfully"
+    "message": "Platform 'Mac OS' has been deleted successfully"
 }
 ```
 
 ---
 
-#### `UPDATE - /platforms/{platform_id}` (Update a Platform record)
+#### `PATCH - /platforms/{platform_id}` (Update a Platform record)
 
-This route allows a user to modify a platform from the database.
-It requires the user to be logged in with an **admin** account.
+- This route allows a user to modify a platform from the database
+- This route can only be utilised by an **admin account**
 
 **Parameters/Response Body**:
 
@@ -578,28 +788,79 @@ Example body-
 
 ```JSON
 {
-    "username": "User 1",
-    "email": "username1@email.com"
+    "platform_name": "Updated Platform Name",
+    "platform_type": "PC"
 }
 ```
 
 **Response**:
 
-Returns the platform with the updated fields.
+- Returns the platform with the updated field
 
 Example response:
 
 ```JSON
 {
-    "user_id": 2,
-    "username": "User 1",
-    "email": "username1@email.com",
-    "is_admin": false,
-    "user_library": [
-        {
-            "user_library_id": 2
-            }
-    ]
+    "platform_id": 4,
+    "platform_name": "Updated Platform Name",
+    "platform_type": "PC",
+    "game_platforms": []
+}
+```
+
+---
+
+#### `POST - /platforms/{platform_id}/game/{game_id}` (Assign game to a platform)
+
+- This route allows users to assign a specific game to a specific platform.
+- This route can only be utilised by an **admin account**
+
+**Parameters/Response Body**:
+
+- No parameters needed in the response body
+- The game_id and platform_id are specified in the route.
+
+**Response**:
+
+- Returns the game_genre record with the associated genre and game.
+
+Example response:
+
+```JSON
+{
+    "game_platforms_id": 24,
+    "platform": {
+        "platform_id": 2,
+        "platform_name": "Linux"
+    },
+    "game": {
+        "game_id": 7,
+        "game_title": "The Legend of Zelda: Breath of the Wild"
+        }
+}
+```
+
+---
+
+#### `DELETE - /platforms/{platform_id}/game/{game_id}` (Delete a game from a platform)
+
+- This route allows users to delete a game that has been assigned a platform
+- This route can only be utilised by an **admin account**
+
+**Parameters/Response Body**:
+
+- No parameters needed in the response body
+- The game_id and platform_id are specified in the route.
+
+**Response**:
+
+- Returns a response to confirm the successful deletion
+
+Example response:
+
+```JSON
+{
+    "message": "Platform 'Linux' has been successfully deleted from the game 'The Legend of Zelda: Breath of the Wild'"
 }
 ```
 
@@ -607,29 +868,66 @@ Example response:
 
 #### `GET - /games/{game_id}` (Get One Game record)
 
-This route allows users to retrieve an individual game record from the database.
+- This route allows users to retrieve an individual game record from the database.
 
 **Parameters/Response Body**:
 
-No parameters needed in the response body. Only a `game_id` in the route.
+- No parameters needed in the response body
+- `game_id` is passed through the route
 
 **Response**:
 
-Returns the game record with the corresponding ID.
+- Returns the game record and corresponding fields such as associated platforms and genres
 
 Example response:
 
 ```JSON
 {
-    "user_id": 2,
-    "username": "Test User 1",
-    "email": "user1@email.com",
-    "is_admin": false,
-    "user_library": [
-        {
-            "user_library_id": 2
-        }
-    ]
+  "game_id": 2,
+  "game_title": "Balatro",
+  "publisher": "Playstack",
+  "description": "Balatro is a hypnotically satisfying deckbuilder where you play illegal poker hands, discover game-changing jokers, and trigger adrenaline-pumping, outrageous combos. Combine valid poker hands with unique Joker cards in order to create varied synergies and builds",
+  "release_date": "2024-02-20",
+  "metacritic_score": 90,
+  "game_genres": [
+    {
+      "game_genres_id": 3,
+      "genre": {
+        "genre_id": 39,
+        "genre_name": "Deck Building"
+      }
+    },
+    {
+      "game_genres_id": 4,
+      "genre": {
+        "genre_id": 5,
+        "genre_name": "Strategy"
+      }
+    },
+    {
+      "game_genres_id": 5,
+      "genre": {
+        "genre_id": 35,
+        "genre_name": "Tactical"
+      }
+    },
+    {
+      "game_genres_id": 6,
+      "genre": {
+        "genre_id": 20,
+        "genre_name": "Roguelike"
+      }
+    }
+  ],
+  "game_platforms": [
+    {
+      "game_platforms_id": 2,
+      "platform": {
+        "platform_id": 1,
+        "platform_name": "Windows"
+      }
+    }
+  ]
 }
 ```
 
@@ -637,40 +935,334 @@ Example response:
 
 #### `GET - /games/` (Get all Game records)
 
-This route allows users to retrieve all game records from the database.
+- This route allows users to retrieve all game records from the database.
 
 **Parameters/Response Body**:
 
-No parameters needed in the response body
+- No parameters needed in the response body
 
 **Response**:
 
-Returns all game records currently registered in the database.
+- Returns all game records currently registered in the database.
+
+Example response:
+
+```JSON
+[
+  {
+    "game_id": 9,
+    "game_title": "Example Game Title",
+    "publisher": "Rahal A",
+    "description": "Test game",
+    "release_date": "2024-01-05",
+    "metacritic_score": 15,
+    "game_genres": [],
+    "game_platforms": []
+  },
+  {
+    "game_id": 2,
+    "game_title": "Balatro",
+    "publisher": "Playstack",
+    "description": "Balatro is a hypnotically satisfying deckbuilder where you play illegal poker hands, discover game-changing jokers, and trigger adrenaline-pumping, outrageous combos. Combine valid poker hands with unique Joker cards in order to create varied synergies and builds",
+    "release_date": "2024-02-20",
+    "metacritic_score": 90,
+    "game_genres": [
+      {
+        "game_genres_id": 3,
+        "genre": {
+          "genre_id": 39,
+          "genre_name": "Deck Building"
+        }
+      },
+      {
+        "game_genres_id": 4,
+        "genre": {
+          "genre_id": 5,
+          "genre_name": "Strategy"
+        }
+      },
+      {
+        "game_genres_id": 5,
+        "genre": {
+          "genre_id": 35,
+          "genre_name": "Tactical"
+        }
+      },
+      {
+        "game_genres_id": 6,
+        "genre": {
+          "genre_id": 20,
+          "genre_name": "Roguelike"
+        }
+      }
+    ],
+    "game_platforms": [
+      {
+        "game_platforms_id": 2,
+        "platform": {
+          "platform_id": 1,
+          "platform_name": "Windows"
+        }
+      }
+    ]
+  }
+]
+```
+
+---
+
+#### `POST - /games/` (Create a platform record)
+
+- This route allows users to create a game record and add it to the database.
+- This route can only be utilised by an **admin account**
+
+**Parameters/Response Body**:
+
+- `game_title`: String - the name of the game being created
+- `description`: String - a short description of the title
+- `publisher`: String - publisher that published the game
+- `release_date`: Date - date the game was released
+- `metacritic_score`: Integer - a score of the game from *Metacritic*
+
+Example response body:
+
+```JSON
+{
+    "game_title": "Example Game Title",
+    "description": "Test game",
+    "publisher": "Rahal A",
+    "release_date": "2024-01-05",
+    "metacritic_score": 15
+}
+```
+
+**Response**:
+
+- Returns the newly created game record and the fields associated.
+
+Example response:
+
+```JSON
+{
+    "game_id": 9,
+    "game_title": "Example Game Title",
+    "publisher": "Rahal A",
+    "description": "Test game",
+    "release_date": "2024-01-05",
+    "metacritic_score": 15,
+    "game_genres": [],
+    "game_platforms": []
+}
+```
+
+---
+
+#### `DELETE - /games/{game_id}` (Delete a Game record)
+
+- This route allows a user to delete a game from the database
+- This route can only be utilised by an **admin account**
+
+**Parameters/Response Body**:
+
+- `game_id` is passed through the route
+
+**Response**:
+
+- Returns a message to confirm the game has been successfuly deleted
+
+Example response:
+
+```JSON
+{
+    "message": "Game 'Example Game Title' has been deleted successfully"
+}
+```
+
+---
+
+#### `PATCH - /games/{game_id}` (Update a Game record)
+
+- This route allows a user to modify a game record from the database
+- This route can only be utilised by an **admin account**
+
+**Parameters/Response Body**:
+
+- `game_id` is passed through the route
+- The body contains the fields to be modified in the record
+
+Example body-
+
+```JSON
+{
+    "game_title": "Updated Game Title",
+    "description": "A better description",
+    "release_date": "2024-01-20",
+    "metacritic_score": "29"
+}
+
+```
+
+**Response**:
+
+- Returns the game with the updated fields.
+
+Example response:
+
+```JSON
+{
+  "game_id": 1,
+  "game_title": "Updated Game Title",
+  "publisher": "Nintendo",
+  "description": "A better description",
+  "release_date": "2024-01-20",
+  "metacritic_score": 29,
+  "game_genres": [
+    {
+      "game_genres_id": 1,
+      "genre": {
+        "genre_id": 2,
+        "genre_name": "Adventure"
+      }
+    }
+  ],
+  "game_platforms": [
+    {
+      "game_platforms_id": 1,
+      "platform": {
+        "platform_id": 5,
+        "platform_name": "Nintendo DS"
+      }
+    }
+  ]
+}
+
+```
+
+---
+
+### Library Routes
+
+#### `GET - /library/{library_id}` (Get One Library record)
+
+- This route allows users to retrieve an individual user library record from the database.
+
+**Parameters/Response Body**:
+
+- No parameters needed in the response body
+- `library_id` is specified in the route
+
+**Response**:
+
+- Returns the user library record with the corresponding ID
+
+Example response:
+
+```JSON
+{
+    "user_library_id": 1,
+    "user": {
+        "username": "Admin Account"
+        },
+    "library_items": [
+        {
+            "library_item_id": 1,
+            "game_id": 1,
+            "game": {
+                "game_title": "Pokemon Diamond"
+                },
+            "status": "Playing",
+            "score": 70
+            },
+        {
+            "library_item_id": 2,
+            "game_id": 2,
+            "game": {
+                "game_title": "Balatro"
+            },
+            "status": "Dropped",
+            "score": 30
+        },
+        {
+            "library_item_id": 3,
+            "game_id": 3,
+            "game": {
+                "game_title": "Slay The Spire"
+                },
+                "status": "Completed",
+                "score": 50
+        }
+    ]
+}
+```
+
+---
+
+#### `GET - /library/all` (Get all Library records)
+
+- This route allows users to retrieve all library records from the database.
+
+**Parameters/Response Body**:
+
+- No parameters needed in the response body
+
+**Response**:
+
+- Returns all user library records in the database.
 
 Example response:
 
 ```JSON
 [
     {
-        "user_id": 1,
-        "username": "Admin Account",
-        "email": "admin@email.com",
-        "is_admin": true,
-        "user_library": [
+        "user_library_id": 1,
+        "user": {
+            "username": "Admin Account"
+            },
+        "library_items": [
             {
-                "user_library_id": 1
+                "library_item_id": 1,
+                "game_id": 1,
+                "game": {
+                    "game_title": "Pokemon Diamond"
+                    },
+                "status": "Playing",
+                "score": 70
+                },
+            {
+                "library_item_id": 2,
+                "game_id": 2,
+                "game": {
+                    "game_title": "Balatro"
+                },
+                "status": "Dropped",
+                "score": 30
+            },
+            {
+                "library_item_id": 3,
+                "game_id": 3,
+                "game": {
+                    "game_title": "Slay The Spire"
+                    },
+                    "status": "Completed",
+                    "score": 50
             }
         ]
     },
     {
-        "user_id": 2,
-        "username": "Test User 1",
-        "email": "user1@email.com",
-        "is_admin": false,
-        "user_library": [
+        "user_library_id": 2,
+        "user": {
+            "username": "User1"
+            },
+        "library_items": [
             {
-                "user_library_id": 2
-            }
+                "library_item_id": 4,
+                "game_id": 1,
+                "game": {
+                    "game_title": "Pokemon Diamond"
+                    },
+                "status": "Completed",
+                "score": 80
+                },
         ]
     }
 ]
@@ -678,67 +1270,89 @@ Example response:
 
 ---
 
-#### `DELETE - /games/{game_id}` (Delete a Game record)
+#### `GET - /library/entry/{library_item_id}` (Get One Library Item record)
 
-This route allows a user to delete an account from the database.
-It requires the user to be logged in with an **admin** account.
+- This route allows users to retrieve an individual library item record from the database.
 
 **Parameters/Response Body**:
 
-- `game_id` of the account to be deleted is passed through the route
+- No parameters needed in the response body
+- `library_item_id` is specified in the route
 
 **Response**:
+
+- Returns the library_item record with the corresponding ID.
 
 Example response:
 
 ```JSON
 {
-    "message": "User with ID '2' has been deleted successfully"
+    "library_item_id": 1,
+    "game_id": 1,
+        "game": {
+            "game_title": "Pokemon Diamond"
+        },
+        "status": "Playing",
+        "score": 70,
+        "user_library": {
+            "user_library_id": 1,
+            "user": {
+                "username": "Admin Account"
+            }
+    }
 }
 ```
 
 ---
 
-#### `UPDATE - /games/{game_id}` (Update a Game record)
+#### `GET - /library/entry` (Get all Library Item records)
 
-This route allows a user to modify a game record from the database.
-It requires the user to be logged in with an **admin** account.
+- This route allows users to retrieve all library item records from the database.
 
 **Parameters/Response Body**:
 
-- `game_id` of the account to be modified is passed through the route
-- The body contains the fields to be modified in the record
-
-Example body-
-
-```JSON
-{
-    "username": "User 1",
-    "email": "username1@email.com"
-}
-```
+- No parameters needed in the response body
 
 **Response**:
 
-Returns the game with the updated fields.
+- Returns all library_item records in the database.
 
 Example response:
 
 ```JSON
-{
-    "user_id": 2,
-    "username": "User 1",
-    "email": "username1@email.com",
-    "is_admin": false,
-    "user_library": [
-        {
-            "user_library_id": 2
+[
+    {
+        "library_item_id": 1,
+        "game_id": 1,
+        "game": {
+            "game_title": "Pokemon Diamond"
+        },
+        "status": "Playing",
+        "score": 70,
+        "user_library": {
+            "user_library_id": 1,
+            "user": {
+                "username": "Admin Account"
             }
-    ]
-}
+        }
+    },
+    {
+        "library_item_id": 2,
+        "game_id": 2,
+        "game": {
+            "game_title": "Balatro"
+        },
+        "status": "Dropped",
+        "score": 30,
+        "user_library": {
+            "user_library_id": 1,
+            "user": {
+                "username": "Admin Account"
+            }
+        }
+    }
+]
 ```
-
-### Library Routes
 
 ## R6: Entity-Relationship Diagram (ERD)
 
