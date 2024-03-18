@@ -24,16 +24,20 @@ def create_app():
 
     # Error handling for entire application
     @app.errorhandler(400)
-    def attribute_error(error):
-        return {"error": str(error)}, 400
-
-    @app.errorhandler(400)
     def bad_request(error):
         return {"error": str(error)}, 400
+
+    @app.errorhandler(401)
+    def unauthorised(error):
+        return {"error": str(error)}, 401
 
     @app.errorhandler(404)
     def not_found(error):
         return {"error": str(error)}, 404
+
+    @app.errorhandler(405)
+    def method_not_allowed(error):
+        return {"error": str(error)}, 405
 
     @app.errorhandler(500)
     def internal_server(error):
