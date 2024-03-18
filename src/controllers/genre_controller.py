@@ -165,7 +165,7 @@ def delete_game_genre(genre_id, game_id):
         db.session.commit()
         return {
             "message": f"Genre '{genre.genre_name}' has been successfully deleted from the game '{game.game_title}'"
-        }
+        }, 201
     # Else, return error that the genre is not assigned to specified game
     else:
         return {

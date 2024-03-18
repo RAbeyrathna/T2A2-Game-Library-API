@@ -1,5 +1,7 @@
 import functools
 
+from sqlalchemy import case
+
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -117,7 +119,7 @@ def get_one_library(library_id):
 @libraries_bp.route("/entry/all")
 def get_all_library_entries():
 
-    # SELECT * FROM library_items;
+    ## SELECT * FROM library_items;
     stmt = db.select(Library_item)
     library_items = db.session.scalars(stmt)
 

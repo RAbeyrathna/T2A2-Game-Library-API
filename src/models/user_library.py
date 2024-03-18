@@ -19,7 +19,7 @@ class User_library(db.Model):
 
 class User_Library_Schema(ma.Schema):
 
-    user = fields.Nested("UserSchema", only=["username", "email"])
+    user = fields.Nested("UserSchema", only=["username"])
 
     library_items = fields.List(
         fields.Nested("Library_Item_Schema", exclude=["user_library"])

@@ -64,12 +64,12 @@ class Library_Item_Schema(ma.Schema):
 
     class Meta:
         fields = (
-            "user_library",
             "library_item_id",
             "game_id",
             "game",
             "status",
             "score",
+            "user_library",
         )
         ordered = True
 

@@ -14,8 +14,9 @@ games_bp = Blueprint("games", __name__, url_prefix="/games")
 @games_bp.route("/")
 def get_all_games():
 
-    # SELECT * FROM games;
-    stmt = db.select(Game)
+    # Retrieve all games and sort in alphabetical order
+    # SELECT * FROM games ORDER BY game_title;
+    stmt = db.select(Game).order_by(Game.game_title)
     games = db.session.scalars(stmt)
 
     # Return all game records in database
