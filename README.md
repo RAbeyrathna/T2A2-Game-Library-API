@@ -8,7 +8,7 @@ An API application designed and created for the Coder Academy T2A2 assignment.
 
 ## Table of Contents
 
-- [Installation of API](#installation-of-api)
+- [Installation of the API app](#installation-of-the-api-app)
 - [R1: Problem Identification](#r1-problem-identification)
 - [R2: Problem Significance](#r2-problem-significance)
 - [R3: Database System Selection and Drawbacks](#r3-database-system-selection-and-drawbacks)
@@ -20,7 +20,7 @@ An API application designed and created for the Coder Academy T2A2 assignment.
 - [R9: Database Relations](#r9-database-relations)
 - [R10: Task Allocation and Tracking](#r10-task-allocation-and-tracking)
 
-## Installation of API
+## Installation of the API app
 
 The steps below assume you are running on a MacOS or Linux based operating system.
 
@@ -29,9 +29,12 @@ The steps below assume you are running on a MacOS or Linux based operating syste
 3. Run `python3 -m venv venv`
 4. Run `source venv/bin/activate`
 5. Run `pip3 install -r requirements.txt` to install the required modules
-6. Run `flask db init` to intialise the database and create the tables
-7. Run `flask db seed` to get the default seed data for the database
-8. Run `flask run` to start the flask server on `http://localhost:8080`
+6. Create a *database table* and *database user* to associate to this API in PostgreSQL
+7. Create a `.env` file according to the `.envsample` and add your own *SECRET KEY* and *database URI*
+8. Run `flask db init` to intialise the database and create the tables
+9. Run `flask db seed` to get the default seed data for the database
+10. Run `flask run` to start the flask server on `http://localhost:8080`
+11. (Optional) Import the provided `docs/Insomnia_Routes.json` file into Insomnia to get a preconfigured list of all the available endpoints
 
 ## R1: Problem Identification
 
