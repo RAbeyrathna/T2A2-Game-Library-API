@@ -95,9 +95,21 @@ The community supporting PSQL is vast and dedicated, which is also backed by the
 
 While PSQL has many beenfits to it, there are a few drawbacks to take into consideration as well. PSQL is commonly criticized as being slower compared to other options such as MySQL and may not be as suitable for larger businesses to implement.
 
-Postgres can also have a larger learning curve which can make it tougher to implement as the developers involved will need to learn and adjust to the database system. This can in turn, make migration more difficult as well after establishing use through PSQL.
+As PSQL has a comprehensive set of features, it can in turn  also have a larger learning curve which can make it tougher to implement as the developers involved will need to learn and adjust to the database system. This can result in making migration more difficult as well after establishing use through PSQL.
 
-Other DBMS such as, *MySQL* may be more simple and easier to learn and get familiar with, but does not offer the same amount of features and benefits that Postgres does. It was through this careful consideration that PSQL was chosen, as for this particular instance, it was easier to implement and provided more benefits than drawbacks in implementation.
+Other DBMS such as, *MySQL* may be more simple and easier to learn and get familiar with, but does not offer the same amount of features and benefits that Postgres does.
+
+PSQL can require quite a bit more tuning and optimisation to get performance similar to other database systems, making it a easier and simpler choice for teams to opt to use an alternative option.
+
+In the context of this proejct, I was the sole developer of the application and had experience with PSQL rather than any other SQL relational database systems, and as such, found that choosing PSQL was the best choice for this app.
+
+The drawback of the learning curve did not impact me as I was familiar enough to work with PSQL and it would have been more time consuming if I was to learn how to work with another database system instead.
+
+The benefits PSQL gave such as ACID compliance benefited this application whereas the drawbacks such as getting other developers familiar with the language were not as relevant.
+
+While PSQL may not perform as great when compared to MySQL or other relational databases, this is usually for larger projects with larger teams, which did not have much influence for this particular project.
+
+It was through this careful consideration that PSQL was chosen, as for this particular instance, it was easier to implement and provided more benefits than drawbacks in implementation.
 
 ## R4: ORM Functionalities and Benefits
 
@@ -1790,9 +1802,11 @@ I would put all the tasks into the backlog initially, and would slowly move them
 
 At the start of the day, I would review the Trello board, and move any tasks into the `Doing` section and focus on working those before looking back at the `To Do` and `Backlog` sections.
 
+During the day, I would also write myself small goals or tasks that I wanted to complete on a piece of paper or sticky note, to give myself goals to work towards completing by the end of the day. This made it simpler to break my tasks into even smaller chunks that otherwise wouldn't make as much sense to track within Trello.
+
 At some points, I would get carried away and work on parts or aspects of the application which would be apart of a card I wasn't focusing on, but I would simply tick of the relevant task on the card when this would happen.
 
-I made sure to use due date to help keep me on track and to manage my workload so I could focus and prioritise tasks, and ensure I was staying within the time frame and completing the entire project on-time.
+I made sure to use due dates to help keep me on track and to manage my workload so I could focus and prioritise tasks, and ensure I was staying within the time frame and completing the entire project on-time. The due dates would generally be set in the future within a few days when I expected to complete that certain card, but more often than not, I would over or underestimate how long the card would realistically take to complete and would need to readjust the date of the card several times. For example, this can be seen with the final screenshot, where I would change the due date of the final `Create README Documentation` card when I would understiamte how long completing each task would take.
 
 ![Trello Board 1](./docs/trello-progress-1.png)
 ![Trello Board 2](./docs/trello-progress-2.png)
