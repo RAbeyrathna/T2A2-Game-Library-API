@@ -162,6 +162,8 @@ Example response:
 }
 ```
 
+---
+
 #### `POST - /auth/login` (User Login)
 
 - This route allows users to login with an account that has been previously registered.
@@ -437,7 +439,7 @@ Example response:
 
 ---
 
-#### `PATCH - /genres/` (Create a genre record)
+#### `POST - /genres/` (Create a genre record)
 
 - This route allows users to create a genre record and add it to the database.
 - This route can only be utilised by an **admin account**.
@@ -579,6 +581,8 @@ Example response:
     "message": "Genre 'Strategy' has been successfully deleted from the game 'Balatro'"
 }
 ```
+
+---
 
 ### Platform Routes
 
@@ -795,7 +799,7 @@ Example body-
 
 **Response**:
 
-- Returns the platform with the updated field
+- Returns the platform with the updated fields
 
 Example response:
 
@@ -1011,7 +1015,7 @@ Example response:
 
 ---
 
-#### `POST - /games/` (Create a platform record)
+#### `POST - /games/` (Create a game record)
 
 - This route allows users to create a game record and add it to the database.
 - This route can only be utilised by an **admin account**
@@ -1354,6 +1358,130 @@ Example response:
 ]
 ```
 
+---
+
+#### `POST - /library/{library_id}` (Create a library entry record)
+
+- This route allows users to create a library entry
+- This route can only be utilised by the **owner of a library** or an **admin account**
+
+**Parameters/Response Body**:
+
+- `game_id`: Integer - the id of the game the user wants to catalog
+- `status`: String - the current status of the game entry
+  - The status can only be one of the predetermined types
+    - Plan to Play
+    - Playing
+    - On-hold
+    - Dropped
+    - Reviewing
+    - Completed
+- `score`: Integer - a score between 0 - 100 of the game. Not a required field
+
+Example response body:
+
+```JSON
+{
+    "game_id": "2",
+    "status": "Plan to Play",
+    "score": 60
+}
+```
+
+**Response**:
+
+- Returns the library_item entry and the associated fields.
+
+Example response:
+
+```JSON
+{
+    "library_item_id": 12,
+    "game_id": 2,
+    "game": {
+        "game_title": "Balatro"
+    },
+    "status": "Plan to Play",
+    "score": 60,
+    "user_library": {
+        "user_library_id": 2,
+        "user": {
+            "username": "User 1"
+        }
+    }
+}
+```
+
+---
+
+#### `DELETE - /library/entry/{library_entry_id}` (Delete a library entry record)
+
+- This route allows a user to delete a library entry from their library
+- This route can only be utilised by the **owner of a library** or an **admin account**
+
+**Parameters/Response Body**:
+
+- `library_entry_id` of the library item to be deleted is passed through the route
+
+**Response**:
+
+- Returns a confirmation message that the specified entry has been deleted
+
+Example response:
+
+```JSON
+{
+    "message": "Game 'Balatro' with library_item_id 2 has been deleted from your library successfully"
+}
+```
+
+---
+
+#### `PATCH - /library/entry/{library_entry_id}` (Update a library entry record)
+
+- This route allows a user to update a library entry from their library
+- This route can only be utilised by the **owner of a library** or an **admin account**
+
+**Parameters/Response Body**:
+
+- `library_entry_id` of the account to be modified is passed through the route
+- The body contains the fields to be modified in the record
+
+Example body-
+
+```JSON
+{
+    "status": "On-hold",
+    "score": 70
+}
+```
+
+**Response**:
+
+- Returns the library entry with the updated fields
+
+Example response:
+
+```JSON
+{
+    "library_item_id": 3,
+    "game_id": 3,
+    "game": {
+        "game_title": "Slay The Spire"
+    },
+    "status": "On-hold",
+    "score": 70,
+    "user_library": {
+        "user_library_id": 1,
+        "user": {
+            "username": "Admin Account"
+        }  
+    }
+}
+```
+
+---
+
 ## R6: Entity-Relationship Diagram (ERD)
 
 > Provide an ERD to visualize the database schema of the application.
@@ -1532,7 +1660,7 @@ class Genre(db.Model):
     )
 ```
 
-The genre model simply holds the *genre_name* and corresponding id of said genre. 
+The genre model simply holds the *genre_name* and corresponding id of said genre.
 
 It relates directly to the `game_genre` model, and has the same `cascade="all, delete"` as if a genre is deleted, then all associated game entries should also be deleted.
 
@@ -1613,16 +1741,19 @@ class Game_platform(db.Model):
 
 Finally we have the `game_platform` model which stores the foreign keys of both the *game_id* and the associated *platform_id*. This is set up identically to the `game_genre` model.
 
-
 ## R9: Database Relations
 
 > Discuss how database relations are implemented within the application.
 
-The Users table is central to the application, with each user identified by a unique user_id (PK). Users are related to user_library through a one-to-one relationship, as each user can have a single library and a library can only be associated with a single user.
+The `Users` table is central to the application, with each user identified by a unique *user_id* (PK). Users are related to `user_library` through a one-to-one relationship, as each user can have a single library and a library can only be associated with a single user. The diagram also represents how the relationship between users and `user_library` is one and only one, meaning that a user can have one and only one library and a single library can only relate back to one and only one user.
 
-The user_library itself is then related to the library_item table through a zero-to-many relationship, as the library itself can have several library_items, which represent entries that a user would have in their game library. The user_library's primary key (user_library_id) is passed to the library_item table as a foreign key.
+The `user_library` itself is then related to the library_item table through a zero-to-many relationship, as the library itself can have several library_items, which represent entries that a user would have in their game library. The user_library's primary key (*user_library_id*) is passed to the `library_item` table as a foreign key.
 
-The library_item and games table also have a zero-to-many relationship as a game can be apart of zero or many library entries, however the library entry itself can only associate to a single game at a time. The library_item table also takes the primary key of game_id from the games table as a foreign key.
+The `library_item` table acts as each individual library entry that users can make in the application and stores data such as the game and associated library, as well as the score and status of said game.
+
+The `library_item` table is related through the `user_library` table back to the users table, through a one to many relationship, as a user can have many library items but a library item can only belong to a single user. The `user_library` acts as a junction between these to faciliate that relationship.
+
+The `library_item` and `games` table also have a zero-to-many relationship as a game can be apart of zero or many library entries, however the library entry itself can only associate to a single game at a time. The `library_item` table also takes the primary key of *game_id* from the `games` table as a foreign key.
 
 As such, each library entry belongs to a single library and is associated to only one user and a particular game.
 
@@ -1632,11 +1763,13 @@ An example entry would look like the following:
 |----------|----------|----------|----------|----------|
 | 1 | 2 | 1 | 70 | Playing |
 
-In this entry, the user which owns library_id 1, is currently playing the game with game_id 2. The entry itself has a unique identifier of library_item_id 1.
+In this entry, the user which owns *library_id* 1, is currently playing the game with *game_id* 2. The entry itself has a unique identifier of *library_item_id* 1.
 
-The Games is the core of the application, and contains details such as game_title, publisher, description, and metacritic_score. This table has a many-to-many relationship with the Genres table through the associative junction table Game_genres, which connects games to their respective genres using game_id and genre_id as foreign keys. This relationship allows a game to belong to multiple genres and a genre to include multiple games.
+The `Games` table is the core of the application, and contains details such as *game_title*, *publisher*, *description*, and *metacritic_score*. This table has a many-to-many relationship with the `Genres` table through the associative junction table, `Game_genres`, which connects games to their respective genres using *game_id* and *genre_id* as foreign keys. This relationship allows a game to belong to multiple genres and a genre to include multiple games.
 
-Similarly, there's a many-to-many relationship between the Games table and the Platform table via game_platforms. This also represents that a game can be available on multiple platforms, and a platform can support multiple games.
+Similarly, there's a many-to-many relationship between the `Games` table and the `Platform` table via `game_platforms`. This also represents that a game can be available on multiple platforms, and a platform can support multiple games.
+
+The `genre` table itself only holds each individual genre record name and ID, while the `platform` table stores the platform name, ID and type of platform associated to said platform.
 
 ## R10: Task Allocation and Tracking
 
@@ -1648,7 +1781,7 @@ At the beginning of the project, I made a list of goals and deliverables I wante
 
 Each card then was given sub-tasks to break it down and work on individually.
 
-I reviewed through the assignment rubric and ensured that there were cards tailored to ensuring I was on track and completing the assignment according to the rubric.
+I reviewed through the assignment rubric and ensured that there were cards tailored to keeping me on track and completing the assignment according to the rubric.
 
 I would put all the tasks into the backlog initially, and would slowly move them into the `To Do` section once I was getting ready to work on them.
 
