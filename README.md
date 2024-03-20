@@ -1588,7 +1588,27 @@ class User_library(db.Model):
 
 The User_library stores the *user_id* to represent who owns the library, and acts as a junction table to relate the user model to the `library_item` model.
 
+The code snippet `db.relationship` command defines the relationship between the models in the application and is important such as to define how the records are deleted between the relationship, especially if any of the records have a dependency on a foreign key.
+
+For example, the following code is found in the `user` model:
+
+```python
+    user_library = db.relationship(
+        "User_library", back_populates="user", cascade="all, delete"
+    )
+```
+
+And the corresponding relationship can be found in the user_library model:
+
+```python
+    user = db.relationship("User", back_populates="user_library")
+```
+
+When comparing the two, we can identify that the inital `"User"` or `"User_library"` strings refer to the model class and that the `back_populates` defines the variable name of the relationship of the corresponding model. 
+
  When a user account is deleted, the according user_library is also deleted as it cannot exist without the corresponding user account. This is accomplished using `cascade="all, delete"`.
+
+ This is only found in the `User` model as we do not want the deletion to go both ways, only if a user account is deleted.
 
  As can be seen in the `user_library` model, it also has a one-to-many relationship with the `library_item` model as the libary_items have a foreign key which is associated to the `user_library` primary key.
 
@@ -1624,12 +1644,14 @@ The User_library stores the *user_id* to represent who owns the library, and act
         ),
     )
  ```
- 
- The `library_item` model acts as the individual entries that a user can add to their libraries to track games that they want to catalog. As such, it holds the *library_id* of the corresponding user and the *game_id* of the game to track. Both the library_id and game_id are foreign keys in this model.
 
- If the user_library is deleted (which is when a user is deleted), all of the associated library_items are then also deleted using `cascade="all, delete"`.
+The `library_item` model acts as the individual entries that a user can add to their libraries to track games that they want to catalog. As such, it holds the *library_id* of the corresponding user and the *game_id* of the game to track. Both the library_id and game_id are foreign keys in this model.
+
+If the user_library is deleted (which is when a user is deleted), all of the associated library_items are then also deleted using `cascade="all, delete"`.
 
 The library item also has a one-to-many relationship with the `games` model, as a library_item must have the corresponding *game_id* for the library entry.
+
+The `Library_item` model also has a unique contraint set up, so that the combination of *game_id* and *user_library_id* are unique to prevent any duplicate records from occuring. This means that a user_library cannot have the same game in their library twice.
 
 `Game Model`
 
@@ -1657,9 +1679,11 @@ class Game(db.Model):
     )
 ```
 
-The game model itself does not hold any foreign keys and acts to store the main data of the games in the application. It stores the main information such as a description of the game, the publisher of the game and the release date of it. 
+The game model itself does not hold any foreign keys and acts to store the main data of the games in the application. It stores the main information such as a description of the game, the publisher of the game and the release date of it.
 
 It relates to two seperate junction tables, which are represented by the `game_genre` and `game_platform` models. This is because the game model has a one-to-many relation with both the `genre` and `platform` models, as a game can have multiple genres and genres can belong to multiple games, and vice versa for platforms.
+
+Each of the `db.relationship` has the `cascade` option defined, as each of the relationships rely on the game record as a foreign key.
 
 `Genre Model`
 
@@ -1706,6 +1730,8 @@ class Game_genre(db.Model):
 The `game_genre` model takes the primary key from the `genre` model as a foreign key and also takes the primary key of the `game` model.
 
 This model can then represent the many to many relationship between the `genre` and `game` models.
+
+Similar to the `Library_item` model, there is a unique contraint defined to prevent any games from having a duplicate genre defined to it.
 
 `Platform Model`
 
@@ -1754,7 +1780,7 @@ class Game_platform(db.Model):
     )
 ```
 
-Finally we have the `game_platform` model which stores the foreign keys of both the *game_id* and the associated *platform_id*. This is set up identically to the `game_genre` model.
+Finally we have the `game_platform` model which stores the foreign keys of both the *game_id* and the associated *platform_id*. This is set up identically to the `game_genre` model, along with the unique contraint to prevent a game from having a duplicate associated platform.
 
 ## R9: Database Relations
 
